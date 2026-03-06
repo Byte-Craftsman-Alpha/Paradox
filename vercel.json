@@ -1,8 +1,8 @@
 {
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "https://otgopumbastbjnkhikjd.supabase.co",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90Z29wdW1iYXN0Ympua2hpa2pkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2Njg0OTEsImV4cCI6MjA4NjI0NDQ5MX0.r5caijAVxQ_2_k_zrcIB-LoW6b1joQn0YKu8BsTxJwY",
-    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90Z29wdW1iYXN0Ympua2hpa2pkIiwicm9sZSI6ImFwcF9mc18yY2M2OTlhMy04ZWI3LTQ4OTMtODM3NC1iOGM4ZWY2YzBhNTZfYWdlbnRfMiIsImlhdCI6MTc3MjgyODI2NSwiZXhwIjoyMDg4MTg4MjY1fQ.fUY4GuMAaBGIKeRdgMa8SaBMCJO1Ekn-AZQoAmTt3zQ",
-    "SUPABASE_DB_SCHEMA": "fs_2cc699a3-8eb7-4893-8374-b8c8ef6c0a56_agent_2"
+    "VITE_API_BASE_URL": "/api",
+    "VITE_LOGIN_HELP_MESSAGE": "Use your registered email and password to sign in.",
+    "VITE_AUTH_TOKEN_STORAGE_KEY": "nexus_token",
+    "SQLITE_DB_PATH": "./data/paradox.sqlite"
   }
 }

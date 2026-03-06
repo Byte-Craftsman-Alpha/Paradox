@@ -1,3 +1,5 @@
+import { apiUrl, parseApiPayload } from './http';
+
 export interface User {
   id: number;
   email: string;
@@ -35,7 +37,7 @@ export interface AuthState {
   loading: boolean;
 }
 
-const TOKEN_KEY = 'nexus_token';
+const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_STORAGE_KEY?.toString().trim() || 'nexus_token';
 
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
@@ -58,39 +60,41 @@ export async function fetchMe(): Promise<{ user: User; member: Member } | null> 
   const token = getToken();
   if (!token) return null;
   try {
-    const res = await fetch('/api/auth/me', {
+    const res = await fetch(apiUrl('/api/auth/me'), {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) {
       removeToken();
       return null;
     }
-    return await res.json();
+    return (await parseApiPayload(res)) as { user: User; member: Member } | null;
   } catch {
     return null;
   }
 }
 
 export async function login(email: string, password: string) {
-  const res = await fetch('/api/auth/login', {
+  const res = await fetch(apiUrl('/api/auth/login'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Login failed');
+  const data = (await parseApiPayload(res)) as any;
+  if (!res.ok) throw new Error(data?.error || 'Login failed');
+  if (!data?.token) throw new Error('Login response missing token');
   setToken(data.token);
   return data;
 }
 
 export async function signup(email: string, password: string, full_name: string) {
-  const res = await fetch('/api/auth/signup', {
+  const res = await fetch(apiUrl('/api/auth/signup'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, full_name }),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Signup failed');
+  const data = (await parseApiPayload(res)) as any;
+  if (!res.ok) throw new Error(data?.error || 'Signup failed');
+  if (!data?.token) throw new Error('Signup response missing token');
   setToken(data.token);
   return data;
 }
@@ -98,7 +102,7 @@ export async function signup(email: string, password: string, full_name: string)
 export async function signout() {
   const token = getToken();
   if (token) {
-    await fetch('/api/auth/signout', {
+    await fetch(apiUrl('/api/auth/signout'), {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
     }).catch(() => {});

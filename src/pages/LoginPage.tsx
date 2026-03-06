@@ -7,6 +7,7 @@ import { LogIn, Eye, EyeOff, Zap } from 'lucide-react';
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const loginHelpMessage = import.meta.env.VITE_LOGIN_HELP_MESSAGE?.trim() || 'Use your registered account credentials. Contact admin if you cannot access your account.';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
@@ -97,9 +98,7 @@ export default function LoginPage() {
           </div>
 
           <div className="pt-3 border-t border-white/[0.06]">
-            <p className="text-xs text-zinc-600 text-center">
-              Demo admin: <span className="text-zinc-400">admin@techteam.dev</span> / <span className="text-zinc-400">Admin@2024!</span>
-            </p>
+            <p className="text-xs text-zinc-600 text-center">{loginHelpMessage}</p>
           </div>
         </form>
       </motion.div>
