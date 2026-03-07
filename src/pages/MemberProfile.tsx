@@ -53,12 +53,15 @@ export default function MemberProfile() {
   const skills = Array.isArray(member.skills) ? member.skills : (typeof member.skills === 'string' ? JSON.parse(member.skills) : []);
   const ghData = member.github_data && typeof member.github_data === 'object' ? member.github_data : {};
   const topRepos = ghData.top_repos || [];
+  const normalizedExperience = (experience || []).map((exp: any) => ({ ...exp, position: exp.position || exp.role || '' }));
+  const normalizedEducation = (education || []).map((edu: any) => ({ ...edu, field_of_study: edu.field_of_study || edu.field || '', gpa: edu.gpa || edu.grade || '' }));
+  const normalizedProjects = (projects || []).map((proj: any) => ({ ...proj, tech_stack: proj.tech_stack || proj.technologies || [], live_url: proj.live_url || proj.project_url || '' }));
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: Briefcase },
     { id: 'projects', label: 'Projects', icon: FolderGit2, count: projects.length },
-    { id: 'experience', label: 'Experience', icon: Briefcase, count: experience.length },
-    { id: 'education', label: 'Education', icon: GraduationCap, count: education.length },
+    { id: 'experience', label: 'Experience', icon: Briefcase, count: normalizedExperience.length },
+    { id: 'education', label: 'Education', icon: GraduationCap, count: normalizedEducation.length },
     { id: 'certificates', label: 'Certificates', icon: Award, count: certificates.length },
   ];
 
@@ -188,11 +191,11 @@ export default function MemberProfile() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         {activeTab === 'overview' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-            {experience.length > 0 && (
+            {normalizedExperience.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Briefcase className="w-4 h-4 text-emerald-400" /> Latest Experience</h3>
                 <div className="space-y-3">
-                  {experience.slice(0, 2).map(exp => (
+                  {normalizedExperience.slice(0, 2).map(exp => (
                     <div key={exp.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
                       <div className="flex items-start justify-between">
                         <div>
@@ -210,11 +213,11 @@ export default function MemberProfile() {
                 </div>
               </div>
             )}
-            {projects.length > 0 && (
+            {normalizedProjects.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><FolderGit2 className="w-4 h-4 text-emerald-400" /> Featured Projects</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {projects.filter(p => p.is_featured).slice(0, 2).map(proj => {
+                  {normalizedProjects.filter(p => p.is_featured).slice(0, 2).map(proj => {
                     const tech = Array.isArray(proj.tech_stack) ? proj.tech_stack : (typeof proj.tech_stack === 'string' ? JSON.parse(proj.tech_stack) : []);
                     return (
                       <div key={proj.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06]">
@@ -238,11 +241,11 @@ export default function MemberProfile() {
 
         {activeTab === 'experience' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-            {experience.length === 0 ? <p className="text-zinc-500 py-8 text-center">No experience listed yet.</p> : (
+            {normalizedExperience.length === 0 ? <p className="text-zinc-500 py-8 text-center">No experience listed yet.</p> : (
               <div className="relative">
                 <div className="absolute left-[19px] top-6 bottom-6 w-px bg-white/[0.06]" />
                 <div className="space-y-6">
-                  {experience.map(exp => (
+                  {normalizedExperience.map(exp => (
                     <div key={exp.id} className="relative pl-12">
                       <div className="absolute left-2.5 top-1.5 w-3 h-3 rounded-full bg-emerald-400/20 border-2 border-emerald-400" />
                       <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
@@ -268,8 +271,8 @@ export default function MemberProfile() {
 
         {activeTab === 'education' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-            {education.length === 0 ? <p className="text-zinc-500 py-8 text-center">No education listed yet.</p> : (
-              education.map(edu => (
+            {normalizedEducation.length === 0 ? <p className="text-zinc-500 py-8 text-center">No education listed yet.</p> : (
+              normalizedEducation.map(edu => (
                 <div key={edu.id} className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
                   <div className="flex items-start justify-between">
                     <div>
@@ -290,8 +293,8 @@ export default function MemberProfile() {
 
         {activeTab === 'projects' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {projects.length === 0 ? <p className="text-zinc-500 py-8 text-center col-span-2">No projects listed yet.</p> : (
-              projects.map(proj => {
+            {normalizedProjects.length === 0 ? <p className="text-zinc-500 py-8 text-center col-span-2">No projects listed yet.</p> : (
+              normalizedProjects.map(proj => {
                 const tech = Array.isArray(proj.tech_stack) ? proj.tech_stack : (typeof proj.tech_stack === 'string' ? JSON.parse(proj.tech_stack) : []);
                 return (
                   <div key={proj.id} className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.1] transition-all">

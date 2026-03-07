@@ -67,9 +67,20 @@ export default function DashboardPage() {
       fetchEducation(memberId), fetchExperience(memberId),
       fetchProjects(memberId), fetchCertificates(memberId),
     ]);
-    setEducation(edu);
-    setExperience(exp);
-    setProjects(proj);
+    setEducation((edu || []).map((e: any) => ({
+      ...e,
+      field_of_study: e.field_of_study || e.field || '',
+      gpa: e.gpa || e.grade || '',
+    })));
+    setExperience((exp || []).map((e: any) => ({
+      ...e,
+      position: e.position || e.role || '',
+    })));
+    setProjects((proj || []).map((p: any) => ({
+      ...p,
+      tech_stack: p.tech_stack || p.technologies || [],
+      live_url: p.live_url || p.project_url || '',
+    })));
     setCertificates(cert);
   };
 
@@ -111,7 +122,15 @@ export default function DashboardPage() {
   const handleAddEdu = async () => {
     if (!member || !newEdu.institution) return;
     try {
-      await createEducation({ ...newEdu, member_id: member.id });
+      await createEducation({
+        member_id: member.id,
+        institution: newEdu.institution,
+        degree: newEdu.degree,
+        field: newEdu.field_of_study,
+        start_date: newEdu.start_date,
+        end_date: newEdu.end_date,
+        grade: newEdu.gpa,
+      });
       await loadSubData(member.id);
       setNewEdu({ institution: '', degree: '', field_of_study: '', start_date: '', end_date: '', gpa: '' });
       showMsg('success', 'Education added!');
@@ -121,7 +140,16 @@ export default function DashboardPage() {
   const handleAddExp = async () => {
     if (!member || !newExp.company || !newExp.position) return;
     try {
-      await createExperience({ ...newExp, member_id: member.id });
+      await createExperience({
+        member_id: member.id,
+        company: newExp.company,
+        role: newExp.position,
+        location: newExp.location,
+        start_date: newExp.start_date,
+        end_date: newExp.end_date,
+        is_current: newExp.is_current,
+        description: newExp.description,
+      });
       await loadSubData(member.id);
       setNewExp({ company: '', position: '', location: '', start_date: '', end_date: '', is_current: false, description: '' });
       showMsg('success', 'Experience added!');
@@ -132,7 +160,15 @@ export default function DashboardPage() {
     if (!member || !newProj.title) return;
     try {
       const techArr = newProj.tech_stack.split(',').map(s => s.trim()).filter(Boolean);
-      await createProject({ ...newProj, tech_stack: techArr, member_id: member.id });
+      await createProject({
+        member_id: member.id,
+        title: newProj.title,
+        description: newProj.description,
+        technologies: techArr,
+        project_url: newProj.live_url,
+        repo_url: newProj.repo_url,
+        is_featured: newProj.is_featured,
+      });
       await loadSubData(member.id);
       setNewProj({ title: '', description: '', tech_stack: '', live_url: '', repo_url: '', is_featured: false });
       showMsg('success', 'Project added!');
@@ -236,6 +272,27 @@ export default function DashboardPage() {
             {activeSection === 'profile' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                 <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
+                  <h2 className="text-lg font-semibold text-white mb-5 flex items-center gap-2"><RefreshCw className="w-5 h-5 text-emerald-400" /> Quick Sync</h2>
+                  <div>
+                    <label className={labelClass}><Github className="w-3.5 h-3.5 inline mr-1" />GitHub Username</label>
+                    <div className="flex gap-3">
+                      <input value={form.github_username} onChange={e => setForm({...form, github_username: e.target.value})} className={inputClass + ' flex-1'} placeholder="GitHub username" />
+                      <button
+                        onClick={handleGitHubSync}
+                        disabled={syncing || !form.github_username}
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 text-white text-sm font-medium hover:bg-zinc-700 disabled:opacity-50 transition-all"
+                      >
+                        <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+                        {syncing ? 'Syncing...' : 'Sync GitHub'}
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-zinc-500 mt-3">
+                    Sync first to auto-fill profile details, avatar, and project data from GitHub.
+                  </p>
+                </div>
+
+                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
                   <h2 className="text-lg font-semibold text-white mb-5 flex items-center gap-2"><User className="w-5 h-5 text-emerald-400" /> Basic Info</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div><label className={labelClass}>Full Name</label><input value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} className={inputClass} /></div>
@@ -255,22 +312,6 @@ export default function DashboardPage() {
                     <div><label className={labelClass}><Linkedin className="w-3.5 h-3.5 inline mr-1" />LinkedIn URL</label><input value={form.linkedin_url} onChange={e => setForm({...form, linkedin_url: e.target.value})} className={inputClass} placeholder="https://linkedin.com/in/..." /></div>
                     <div><label className={labelClass}><Twitter className="w-3.5 h-3.5 inline mr-1" />Twitter Handle</label><input value={form.twitter_handle} onChange={e => setForm({...form, twitter_handle: e.target.value})} className={inputClass} placeholder="@yourhandle" /></div>
                   </div>
-                </div>
-
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
-                  <h2 className="text-lg font-semibold text-white mb-5 flex items-center gap-2"><Github className="w-5 h-5 text-emerald-400" /> GitHub Integration</h2>
-                  <div className="flex gap-3">
-                    <input value={form.github_username} onChange={e => setForm({...form, github_username: e.target.value})} className={inputClass + ' flex-1'} placeholder="GitHub username" />
-                    <button
-                      onClick={handleGitHubSync}
-                      disabled={syncing || !form.github_username}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 text-white text-sm font-medium hover:bg-zinc-700 disabled:opacity-50 transition-all"
-                    >
-                      <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-                      {syncing ? 'Syncing...' : 'Sync'}
-                    </button>
-                  </div>
-                  <p className="text-xs text-zinc-500 mt-2">Sync your avatar, bio, repos, and stats from GitHub.</p>
                 </div>
 
                 <button

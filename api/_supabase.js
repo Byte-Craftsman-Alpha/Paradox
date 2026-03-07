@@ -3,6 +3,50 @@ import fs from 'fs';
 import path from 'path';
 import Database from 'better-sqlite3';
 
+const landingDefaults = {
+  hero_badge: 'IET Gorakhpur - Team Paradox',
+  hero_title: 'Team Paradox',
+  hero_tagline: 'Crafting digital solutions, one byte at a time',
+  hero_description: 'We are a passionate team of student developers at IET Gorakhpur, building innovative projects, contributing to open source, and pushing the boundaries of technology.',
+  about_title: 'Who We Are',
+  mission_title: 'Our Mission',
+  mission_description: 'To foster a collaborative environment where students can learn, build, and innovate together while making meaningful contributions to the tech community.',
+  team_title: 'Our Team',
+  team_description: 'The brilliant minds behind our projects and innovations.',
+  achievements_title: 'Our Achievements',
+  achievements_description: 'A live snapshot of team output from approved members, projects, repositories, and certifications.',
+  contact_title: 'Get In Touch',
+  contact_description: 'Interested in collaborating or joining the team? Reach out to us through the links below or create your profile to become part of the public directory.',
+  contact_email: 'team@paradox.local',
+  hero_stats: JSON.stringify([
+    { label: 'Team Members', type: 'members' },
+    { label: 'GitHub Profiles', type: 'github_profiles' },
+    { label: 'Projects / Repos', type: 'projects_repos' },
+    { label: 'Engineers', type: 'members' },
+  ]),
+  mission_cards: JSON.stringify([
+    { icon: 'Github', title: 'Open Source', description: 'Active contribution culture with synced repositories and public code visibility.' },
+    { icon: 'Lightbulb', title: 'Innovation', description: 'A shared space to prototype, ship, and improve products with measurable output.' },
+    { icon: 'BookOpen', title: 'Learning', description: 'Profiles capture evolving skills, certifications, and technical growth over time.' },
+    { icon: 'HeartHandshake', title: 'Community', description: 'The platform makes it easier to discover teammates, work, and areas of expertise.' },
+  ]),
+  core_stack_items: JSON.stringify(['React/Next.js', 'Node.js', 'TypeScript', 'Python/ML', 'Git/GitHub', 'UI/UX']),
+  team_filter_labels: JSON.stringify(['All', 'Developers', 'GitHub Synced', 'Featured']),
+  achievement_items: JSON.stringify([
+    { date: 'Live Data', title: 'Approved member directory is active', description: 'Approved member profiles currently power the landing page.' },
+    { date: 'GitHub Sync', title: 'Repository data is synced', description: 'Connected GitHub profiles and public repos are indexed from the database.' },
+    { date: 'Projects', title: 'Project showcase is ready', description: 'Project records are available for member portfolios.' },
+    { date: 'Certificates', title: 'Certification tracking is enabled', description: 'Certificate records are stored for verified team members.' },
+  ]),
+  contact_links: JSON.stringify([
+    { label: 'GitHub', type: 'member_github', href: '' },
+    { label: 'LinkedIn', type: 'member_linkedin', href: '' },
+    { label: 'Twitter', type: 'member_twitter', href: '' },
+    { label: 'Website', type: 'member_website', href: '' },
+    { label: 'Email', type: 'email', href: '' },
+  ]),
+};
+
 const tableMeta = {
   team_members: {
     bool: new Set(['is_approved', 'is_featured']),
@@ -23,6 +67,17 @@ const tableMeta = {
   certificates: {
     bool: new Set(),
     json: new Set(),
+  },
+  landing_settings: {
+    bool: new Set(['sync_on_profile_save']),
+    json: new Set([
+      'hero_stats',
+      'mission_cards',
+      'core_stack_items',
+      'team_filter_labels',
+      'achievement_items',
+      'contact_links',
+    ]),
   },
   auth_users: {
     bool: new Set(),
@@ -138,10 +193,100 @@ CREATE TABLE IF NOT EXISTS certificates (
   FOREIGN KEY (member_id) REFERENCES team_members(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS landing_settings (
+  id INTEGER PRIMARY KEY,
+  hero_badge TEXT NOT NULL DEFAULT 'IET Gorakhpur - Team Paradox',
+  hero_title TEXT NOT NULL DEFAULT 'Team Paradox',
+  hero_tagline TEXT NOT NULL DEFAULT 'Crafting digital solutions, one byte at a time',
+  hero_description TEXT NOT NULL DEFAULT 'We are a passionate team of student developers at IET Gorakhpur, building innovative projects, contributing to open source, and pushing the boundaries of technology.',
+  about_title TEXT NOT NULL DEFAULT 'Who We Are',
+  mission_title TEXT NOT NULL DEFAULT 'Our Mission',
+  mission_description TEXT NOT NULL DEFAULT 'To foster a collaborative environment where students can learn, build, and innovate together while making meaningful contributions to the tech community.',
+  team_title TEXT NOT NULL DEFAULT 'Our Team',
+  team_description TEXT NOT NULL DEFAULT 'The brilliant minds behind our projects and innovations.',
+  achievements_title TEXT NOT NULL DEFAULT 'Our Achievements',
+  achievements_description TEXT NOT NULL DEFAULT 'A live snapshot of team output from approved members, projects, repositories, and certifications.',
+  contact_title TEXT NOT NULL DEFAULT 'Get In Touch',
+  contact_description TEXT NOT NULL DEFAULT 'Interested in collaborating or joining the team? Reach out to us through the links below or create your profile to become part of the public directory.',
+  contact_email TEXT NOT NULL DEFAULT 'team@paradox.local',
+  hero_stats TEXT NOT NULL DEFAULT '[]',
+  mission_cards TEXT NOT NULL DEFAULT '[]',
+  core_stack_items TEXT NOT NULL DEFAULT '[]',
+  team_filter_labels TEXT NOT NULL DEFAULT '[]',
+  achievement_items TEXT NOT NULL DEFAULT '[]',
+  contact_links TEXT NOT NULL DEFAULT '[]',
+  sync_mode TEXT NOT NULL DEFAULT 'manual',
+  sync_on_profile_save INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE INDEX IF NOT EXISTS idx_members_slug ON team_members(slug);
 CREATE INDEX IF NOT EXISTS idx_members_user_id ON team_members(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON auth_sessions(expires_at);
 `);
+
+function ensureColumn(table, column, definition) {
+  const columns = db.prepare(`PRAGMA table_info(${table})`).all();
+  const exists = columns.some((item) => item.name === column);
+  if (!exists) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
+ensureColumn('landing_settings', 'hero_stats', `TEXT NOT NULL DEFAULT '[]'`);
+ensureColumn('landing_settings', 'mission_cards', `TEXT NOT NULL DEFAULT '[]'`);
+ensureColumn('landing_settings', 'core_stack_items', `TEXT NOT NULL DEFAULT '[]'`);
+ensureColumn('landing_settings', 'team_filter_labels', `TEXT NOT NULL DEFAULT '[]'`);
+ensureColumn('landing_settings', 'achievement_items', `TEXT NOT NULL DEFAULT '[]'`);
+ensureColumn('landing_settings', 'contact_links', `TEXT NOT NULL DEFAULT '[]'`);
+
+db.prepare('INSERT OR IGNORE INTO landing_settings (id) VALUES (1)').run();
+db.prepare(`
+  UPDATE landing_settings
+  SET
+    hero_badge = COALESCE(NULLIF(hero_badge, ''), ?),
+    hero_title = COALESCE(NULLIF(hero_title, ''), ?),
+    hero_tagline = COALESCE(NULLIF(hero_tagline, ''), ?),
+    hero_description = COALESCE(NULLIF(hero_description, ''), ?),
+    about_title = COALESCE(NULLIF(about_title, ''), ?),
+    mission_title = COALESCE(NULLIF(mission_title, ''), ?),
+    mission_description = COALESCE(NULLIF(mission_description, ''), ?),
+    team_title = COALESCE(NULLIF(team_title, ''), ?),
+    team_description = COALESCE(NULLIF(team_description, ''), ?),
+    achievements_title = COALESCE(NULLIF(achievements_title, ''), ?),
+    achievements_description = COALESCE(NULLIF(achievements_description, ''), ?),
+    contact_title = COALESCE(NULLIF(contact_title, ''), ?),
+    contact_description = COALESCE(NULLIF(contact_description, ''), ?),
+    contact_email = COALESCE(NULLIF(contact_email, ''), ?),
+    hero_stats = COALESCE(NULLIF(hero_stats, ''), ?),
+    mission_cards = COALESCE(NULLIF(mission_cards, ''), ?),
+    core_stack_items = COALESCE(NULLIF(core_stack_items, ''), ?),
+    team_filter_labels = COALESCE(NULLIF(team_filter_labels, ''), ?),
+    achievement_items = COALESCE(NULLIF(achievement_items, ''), ?),
+    contact_links = COALESCE(NULLIF(contact_links, ''), ?)
+  WHERE id = 1
+`).run(
+  landingDefaults.hero_badge,
+  landingDefaults.hero_title,
+  landingDefaults.hero_tagline,
+  landingDefaults.hero_description,
+  landingDefaults.about_title,
+  landingDefaults.mission_title,
+  landingDefaults.mission_description,
+  landingDefaults.team_title,
+  landingDefaults.team_description,
+  landingDefaults.achievements_title,
+  landingDefaults.achievements_description,
+  landingDefaults.contact_title,
+  landingDefaults.contact_description,
+  landingDefaults.contact_email,
+  landingDefaults.hero_stats,
+  landingDefaults.mission_cards,
+  landingDefaults.core_stack_items,
+  landingDefaults.team_filter_labels,
+  landingDefaults.achievement_items,
+  landingDefaults.contact_links,
+);
 
 function prepareValue(table, column, value) {
   const meta = tableMeta[table];

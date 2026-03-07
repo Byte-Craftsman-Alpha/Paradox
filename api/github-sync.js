@@ -1,5 +1,6 @@
 import supabase from './_supabase.js';
 import { getSession } from './_auth.js';
+import { syncGitHubForMember } from './_github_sync.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,48 +16,34 @@ export default async function handler(req, res) {
     const { member_id, github_username } = req.body;
     if (!github_username) return res.status(400).json({ error: 'GitHub username required' });
 
-    const ghRes = await fetch(`https://api.github.com/users/${github_username}`);
-    if (!ghRes.ok) return res.status(404).json({ error: 'GitHub user not found' });
-    const ghData = await ghRes.json();
-
-    const reposRes = await fetch(`https://api.github.com/users/${github_username}/repos?sort=stars&per_page=6&direction=desc`);
-    const repos = reposRes.ok ? await reposRes.json() : [];
-
-    const github_data = {
-      login: ghData.login,
-      name: ghData.name,
-      avatar_url: ghData.avatar_url,
-      bio: ghData.bio,
-      public_repos: ghData.public_repos,
-      followers: ghData.followers,
-      following: ghData.following,
-      html_url: ghData.html_url,
-      company: ghData.company,
-      blog: ghData.blog,
-      location: ghData.location,
-      top_repos: repos.map(r => ({
-        name: r.name,
-        description: r.description,
-        stars: r.stargazers_count,
-        forks: r.forks_count,
-        language: r.language,
-        url: r.html_url,
-      })),
-      synced_at: new Date().toISOString(),
-    };
-
-    const updateData = { github_data, github_username };
-    if (ghData.avatar_url) updateData.avatar_url = ghData.avatar_url;
-
-    const { data, error } = await supabase
+    const { data: requester } = await supabase
       .from('team_members')
-      .update(updateData)
-      .eq('id', member_id)
-      .select()
+      .select('id, user_id, role')
+      .eq('user_id', session.user_id)
       .single();
-    if (error) throw error;
+    if (!requester) return res.status(403).json({ error: 'Profile not found for authenticated user' });
 
-    return res.status(200).json({ member: data, github_data });
+    const { data: targetMember } = await supabase
+      .from('team_members')
+      .select('*')
+      .eq('id', member_id)
+      .single();
+    if (!targetMember) return res.status(404).json({ error: 'Member not found' });
+
+    const isAdmin = requester.role === 'admin';
+    const isOwner = requester.user_id === targetMember.user_id;
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ error: 'You can only sync your own profile' });
+    }
+
+    const result = await syncGitHubForMember({
+      supabase,
+      member_id,
+      github_username,
+      targetMember,
+    });
+
+    return res.status(200).json(result);
   } catch (err) {
     console.error('GitHub sync error:', err);
     return res.status(500).json({ error: err.message });

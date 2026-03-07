@@ -1,5 +1,6 @@
 import supabase from './_supabase.js';
 import { getSession } from './_auth.js';
+import { syncGitHubForMember } from './_github_sync.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -78,6 +79,46 @@ export default async function handler(req, res) {
         .select()
         .single();
       if (error) throw error;
+
+      const { data: landingSettings } = await supabase
+        .from('landing_settings')
+        .select('*')
+        .eq('id', 1)
+        .single();
+
+      const profileSyncFields = new Set([
+        'full_name',
+        'title',
+        'bio',
+        'avatar_url',
+        'location',
+        'phone',
+        'website',
+        'github_username',
+        'linkedin_url',
+        'twitter_handle',
+        'dribbble_url',
+        'resume_url',
+        'skills',
+      ]);
+      const touchedProfileDetails = Object.keys(updates).some((key) => profileSyncFields.has(key));
+      const shouldAutoSync = Boolean(
+        touchedProfileDetails &&
+        data?.github_username &&
+        landingSettings &&
+        (landingSettings.sync_mode === 'automatic' || landingSettings.sync_on_profile_save),
+      );
+
+      if (shouldAutoSync) {
+        const synced = await syncGitHubForMember({
+          supabase,
+          member_id: data.id,
+          github_username: data.github_username,
+          targetMember: data,
+        });
+        return res.status(200).json(synced.member);
+      }
+
       return res.status(200).json(data);
     }
 

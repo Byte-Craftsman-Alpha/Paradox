@@ -13,6 +13,10 @@ export async function fetchMembers(all = false) {
   return requestJson(url, { headers: authHeaders() });
 }
 
+export async function fetchLandingData() {
+  return requestJson('/api/landing');
+}
+
 export async function fetchMemberBySlug(slug: string) {
   return requestJson(`/api/members?slug=${slug}`);
 }
@@ -117,6 +121,18 @@ export async function fetchAdminStats() {
   return requestJson('/api/admin/stats', { headers: authHeaders() });
 }
 
+export async function fetchLandingSettings() {
+  return requestJson('/api/admin/landing', { headers: authHeaders() });
+}
+
+export async function updateLandingSettings(updates: any) {
+  return requestJson('/api/admin/landing', {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(updates),
+  });
+}
+
 export async function fetchPendingMembers() {
   return requestJson('/api/admin/pending', { headers: authHeaders() });
 }
@@ -126,5 +142,13 @@ export async function approveMember(memberId: number, approved: boolean) {
     method: 'POST',
     headers: authHeaders(),
     body: JSON.stringify({ member_id: memberId, approved }),
+  });
+}
+
+export async function adminSyncMembers(memberId?: number) {
+  return requestJson('/api/admin/sync', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(memberId ? { member_id: memberId } : {}),
   });
 }
