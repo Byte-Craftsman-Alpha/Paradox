@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@libsql/client": "^0.15.15",
     "@tailwindcss/vite": "^4.2.1",
     "better-sqlite3": "^12.6.2",
     "dotenv": "^17.3.1",

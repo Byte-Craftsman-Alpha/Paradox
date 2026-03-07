@@ -1,9 +1,0 @@
-{
-  "env": {
-    "VITE_API_BASE_URL": "/api",
-    "VITE_LOGIN_HELP_MESSAGE": "Use your registered email and password to sign in.",
-    "VITE_AUTH_TOKEN_STORAGE_KEY": "nexus_token",
-    "SQLITE_DB_PATH": "./data/paradox.sqlite",
-    "LINKEDIN_PROXYCURL_API_KEY": ""
-  }
-}
