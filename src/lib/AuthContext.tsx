@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { type User, type Member, fetchMe, login as apiLogin, signup as apiSignup, signout as apiSignout } from './auth';
+import { type User, type Member, type SignupOtpResponse, fetchMe, login as apiLogin, signupWithVerification as apiSignup, signout as apiSignout } from './auth';
 
 interface AuthContextType {
   user: User | null;
@@ -7,7 +7,7 @@ interface AuthContextType {
   loading: boolean;
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, fullName: string) => Promise<void>;
+  signup: (email: string, password: string, fullName: string, captchaToken: string, captchaAnswer: string) => Promise<SignupOtpResponse>;
   signout: () => Promise<void>;
   refreshAuth: () => Promise<void>;
 }
@@ -45,10 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setMember(data.member);
   };
 
-  const signup = async (email: string, password: string, fullName: string) => {
-    const data = await apiSignup(email, password, fullName);
-    setUser(data.user);
-    setMember(data.member);
+  const signup = async (email: string, password: string, fullName: string, captchaToken: string, captchaAnswer: string) => {
+    return apiSignup(email, password, fullName, captchaToken, captchaAnswer);
   };
 
   const signout = async () => {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../lib/AuthContext';
 import { LogIn, Eye, EyeOff, Zap } from 'lucide-react';
@@ -7,6 +7,7 @@ import { LogIn, Eye, EyeOff, Zap } from 'lucide-react';
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const loginHelpMessage = import.meta.env.VITE_LOGIN_HELP_MESSAGE?.trim() || 'Use your registered account credentials. Contact admin if you cannot access your account.';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,6 +48,16 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
+          {searchParams.get('verified') === '1' && (
+            <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">
+              Email verified. You can sign in now.
+            </div>
+          )}
+          {searchParams.get('verify') === '1' && (
+            <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-sm">
+              Check your inbox for the OTP and verify your email before signing in.
+            </div>
+          )}
           {error && (
             <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
               {error}

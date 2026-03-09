@@ -101,6 +101,19 @@ function localApiPlugin() {
               res.end(payload)
               return resLike
             },
+            send: (payload?: string) => {
+              if (!res.getHeader('Content-Type')) {
+                res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+              }
+              res.end(payload)
+              return resLike
+            },
+            redirect: (location: string) => {
+              res.statusCode = 302
+              res.setHeader('Location', location)
+              res.end()
+              return resLike
+            },
           }
 
           await handler(reqLike, resLike)

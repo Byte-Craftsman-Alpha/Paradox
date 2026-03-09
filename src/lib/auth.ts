@@ -30,6 +30,21 @@ export interface Member {
   updated_at: string;
 }
 
+export interface CaptchaChallenge {
+  prompt: string;
+  image_data: string;
+  captcha_token: string;
+}
+
+export interface SignupOtpResponse {
+  ok: boolean;
+  requires_verification: boolean;
+  email: string;
+  message: string;
+  expires_in_seconds: number;
+  resend_in_seconds: number;
+}
+
 export interface AuthState {
   user: User | null;
   member: Member | null;
@@ -86,17 +101,44 @@ export async function login(email: string, password: string) {
   return data;
 }
 
-export async function signup(email: string, password: string, full_name: string) {
+export async function signupWithVerification(email: string, password: string, full_name: string, captcha_token: string, captcha_answer: string): Promise<SignupOtpResponse> {
   const res = await fetch(apiUrl('/api/auth/signup'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, full_name }),
+    body: JSON.stringify({ email, password, full_name, captcha_token, captcha_answer }),
   });
   const data = (await parseApiPayload(res)) as any;
   if (!res.ok) throw new Error(data?.error || 'Signup failed');
-  if (!data?.token) throw new Error('Signup response missing token');
-  setToken(data.token);
+  return data as SignupOtpResponse;
+}
+
+export async function verifySignupOtp(email: string, otp: string) {
+  const res = await fetch(apiUrl('/api/auth/verify-otp'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, otp }),
+  });
+  const data = (await parseApiPayload(res)) as any;
+  if (!res.ok) throw new Error(data?.error || 'OTP verification failed');
   return data;
+}
+
+export async function resendSignupOtp(email: string): Promise<SignupOtpResponse> {
+  const res = await fetch(apiUrl('/api/auth/resend-otp'), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  const data = (await parseApiPayload(res)) as any;
+  if (!res.ok) throw new Error(data?.error || 'Failed to resend OTP');
+  return data as SignupOtpResponse;
+}
+
+export async function fetchCaptchaChallenge(): Promise<CaptchaChallenge> {
+  const res = await fetch(apiUrl('/api/auth/captcha'));
+  const data = (await parseApiPayload(res)) as CaptchaChallenge | any;
+  if (!res.ok) throw new Error((data as any)?.error || 'Failed to load captcha');
+  return data as CaptchaChallenge;
 }
 
 export async function signout() {

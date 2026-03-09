@@ -74,6 +74,10 @@ const tableMeta = {
     json: new Set(['hero_stats', 'mission_cards', 'core_stack_items', 'team_filter_labels', 'achievement_items', 'contact_links']),
   },
   auth_users: {
+    bool: new Set(['email_verified']),
+    json: new Set(),
+  },
+  pending_registrations: {
     bool: new Set(),
     json: new Set(),
   },
@@ -88,6 +92,22 @@ const schemaStatements = [
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
+    email_verified INTEGER NOT NULL DEFAULT 1,
+    email_verification_token TEXT NOT NULL DEFAULT '',
+    email_verification_expires_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )`,
+  `CREATE TABLE IF NOT EXISTS pending_registrations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    full_name TEXT NOT NULL DEFAULT '',
+    verification_token TEXT NOT NULL DEFAULT '',
+    expires_at TEXT NOT NULL,
+    otp_hash TEXT NOT NULL DEFAULT '',
+    otp_expires_at TEXT,
+    otp_attempts INTEGER NOT NULL DEFAULT 0,
+    otp_last_sent_at TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   )`,
   `CREATE TABLE IF NOT EXISTS team_members (
@@ -200,6 +220,7 @@ const schemaStatements = [
   )`,
   `CREATE INDEX IF NOT EXISTS idx_members_slug ON team_members(slug)`,
   `CREATE INDEX IF NOT EXISTS idx_members_user_id ON team_members(user_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_pending_registrations_expires_at ON pending_registrations(expires_at)`,
   `CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON auth_sessions(expires_at)`,
 ];
 
@@ -255,6 +276,35 @@ async function initializeDatabase() {
       await execStatement(`ALTER TABLE landing_settings ADD COLUMN ${column[0]} ${column[1]}`);
     }
   }
+
+  for (const column of [
+    ['email_verified', `INTEGER NOT NULL DEFAULT 1`],
+    ['email_verification_token', `TEXT NOT NULL DEFAULT ''`],
+    ['email_verification_expires_at', `TEXT`],
+  ]) {
+    const pragma = await execStatement(`PRAGMA table_info(auth_users)`);
+    const exists = (pragma.rows || []).some((row) => row.name === column[0]);
+    if (!exists) {
+      await execStatement(`ALTER TABLE auth_users ADD COLUMN ${column[0]} ${column[1]}`);
+    }
+  }
+
+  for (const column of [
+    ['verification_token', `TEXT NOT NULL DEFAULT ''`],
+    ['otp_hash', `TEXT NOT NULL DEFAULT ''`],
+    ['otp_expires_at', `TEXT`],
+    ['otp_attempts', `INTEGER NOT NULL DEFAULT 0`],
+    ['otp_last_sent_at', `TEXT`],
+  ]) {
+    const pragma = await execStatement(`PRAGMA table_info(pending_registrations)`);
+    const exists = (pragma.rows || []).some((row) => row.name === column[0]);
+    if (!exists) {
+      await execStatement(`ALTER TABLE pending_registrations ADD COLUMN ${column[0]} ${column[1]}`);
+    }
+  }
+
+  await execStatement(`UPDATE auth_users SET email_verified = 1 WHERE email_verified IS NULL`);
+  await execStatement(`DELETE FROM pending_registrations WHERE expires_at <= ?`, [new Date().toISOString()]);
 
   await execStatement('INSERT OR IGNORE INTO landing_settings (id) VALUES (1)');
   await execStatement(
