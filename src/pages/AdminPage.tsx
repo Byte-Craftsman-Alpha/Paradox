@@ -142,12 +142,12 @@ export default function AdminPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [showAdvancedModal, setShowAdvancedModal] = useState(false);
   const [editingSection, setEditingSection] = useState<string | null>(null);
-  const [tempHeroStats, setTempHeroStats] = useState<any[]>([]);
-  const [tempMissionCards, setTempMissionCards] = useState<any[]>([]);
-  const [tempCoreStackItems, setTempCoreStackItems] = useState<string[]>([]);
-  const [tempTeamFilterLabels, setTempTeamFilterLabels] = useState<string[]>([]);
-  const [tempAchievementItems, setTempAchievementItems] = useState<any[]>([]);
-  const [tempContactLinks, setTempContactLinks] = useState<any[]>([]);
+  const [tempHeroStats, setTempHeroStats] = useState<any[]>(landingSettings.hero_stats || []);
+  const [tempMissionCards, setTempMissionCards] = useState<any[]>(landingSettings.mission_cards || []);
+  const [tempCoreStackItems, setTempCoreStackItems] = useState<string[]>(landingSettings.core_stack_items || []);
+  const [tempTeamFilterLabels, setTempTeamFilterLabels] = useState<string[]>(landingSettings.team_filter_labels || []);
+  const [tempAchievementItems, setTempAchievementItems] = useState<any[]>(landingSettings.achievement_items || []);
+  const [tempContactLinks, setTempContactLinks] = useState<any[]>(landingSettings.contact_links || []);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) navigate('/login');
@@ -156,6 +156,17 @@ export default function AdminPage() {
   useEffect(() => {
     if (isAdmin) loadData();
   }, [isAdmin]);
+
+  useEffect(() => {
+    if (landingSettings) {
+      setTempHeroStats(landingSettings.hero_stats || []);
+      setTempMissionCards(landingSettings.mission_cards || []);
+      setTempCoreStackItems(landingSettings.core_stack_items || []);
+      setTempTeamFilterLabels(landingSettings.team_filter_labels || []);
+      setTempAchievementItems(landingSettings.achievement_items || []);
+      setTempContactLinks(landingSettings.contact_links || []);
+    }
+  }, [landingSettings]);
 
   const showMessage = (type: 'success' | 'error', text: string) => {
     setMessage({ type, text });
@@ -442,42 +453,81 @@ export default function AdminPage() {
   const labelClass = 'mb-1.5 block text-sm font-medium text-zinc-300';
 
   return (
-    <div className="min-h-screen pt-20 pb-16">
+    <div className="min-h-screen pt-20 pb-16 scroll-smooth">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="mb-8"
+        >
           <div className="flex items-center gap-3 mb-2">
-            <Shield className="w-6 h-6 text-amber-400" />
+            <motion.div
+              initial={{ rotate: 0 }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="flex items-center"
+            >
+              <Shield className="w-6 h-6 text-amber-400" />
+            </motion.div>
             <h1 className="text-3xl font-bold text-white">Admin Panel</h1>
           </div>
-          <p className="text-zinc-400 text-sm">Manage team members, landing page content, and GitHub sync behavior.</p>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-zinc-400 text-sm"
+          >
+            Manage team members, landing page content, and GitHub sync behavior.
+          </motion.p>
         </motion.div>
 
         {message && (
-          <div className={`mb-6 rounded-xl border px-4 py-3 text-sm ${message.type === 'success' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' : 'border-red-500/20 bg-red-500/10 text-red-400'}`}>
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className={`mb-6 rounded-xl border px-4 py-3 text-sm ${message.type === 'success' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' : 'border-red-500/20 bg-red-500/10 text-red-400'}`}
+          >
             {message.text}
-          </div>
+          </motion.div>
         )}
 
         <div className="flex gap-1 mb-8 border-b border-white/[0.06] overflow-x-auto">
-          {tabs.map((tab) => (
-            <button
+          {tabs.map((tab, index) => (
+            <motion.button
               key={tab.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
               onClick={() => setActiveTab(tab.id)}
+              whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+              whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
               className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-all ${activeTab === tab.id ? 'text-amber-400 border-amber-400' : 'text-zinc-500 border-transparent hover:text-zinc-300'}`}
             >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
+              <tab.icon className="w-4 h-4 flex-shrink-0" />
+              <span className="flex-1">{tab.label}</span>
               {tab.count !== undefined && tab.count > 0 && (
-                <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeTab === tab.id ? 'bg-amber-500/20 text-amber-400' : 'bg-white/[0.06] text-zinc-500'}`}>
+                <motion.span 
+                  className={`text-xs px-1.5 py-0.5 rounded-full flex-shrink-0 ${activeTab === tab.id ? 'bg-amber-500/20 text-amber-400' : 'bg-white/[0.06] text-zinc-500'}`}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 + 0.2 }}
+                >
                   {tab.count}
-                </span>
+                </motion.span>
               )}
-            </button>
+            </motion.button>
           ))}
         </div>
 
         {activeTab === 'overview' && stats && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
               {[
                 { label: 'Total Members', value: stats.total_members, icon: Users, iconClass: 'text-emerald-400' },
@@ -485,12 +535,33 @@ export default function AdminPage() {
                 { label: 'Projects', value: stats.total_projects, icon: FolderGit2, iconClass: 'text-cyan-400' },
                 { label: 'Certificates', value: stats.total_certificates, icon: Award, iconClass: 'text-fuchsia-400' },
                 { label: 'Featured', value: stats.featured_members, icon: Star, iconClass: 'text-yellow-400' },
-              ].map((card) => (
-                <div key={card.label} className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06]">
-                  <card.icon className={`w-5 h-5 mb-3 ${card.iconClass}`} />
-                  <div className="text-3xl font-bold text-white">{card.value}</div>
+              ].map((card, index) => (
+                <motion.div 
+                  key={card.label} 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  whileHover={{ 
+                    scale: 1.02, 
+                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)",
+                    transition: { duration: 0.2 } 
+                  }}
+                  whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+                  className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06]"
+                >
+                  <div className="flex items-center gap-3">
+                    <card.icon className={`w-5 h-5 flex-shrink-0 ${card.iconClass}`} />
+                    <motion.div 
+                      className="text-3xl font-bold text-white flex-1"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.4, delay: index * 0.1 + 0.2 }}
+                    >
+                      {card.value}
+                    </motion.div>
+                  </div>
                   <div className="text-xs text-zinc-500 mt-1">{card.label}</div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
@@ -678,24 +749,33 @@ export default function AdminPage() {
                   <p className="text-sm text-zinc-400 mb-6">Manage mission tiles, core stack, team chips, achievements, stat tiles, and contact links.</p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button
+                    <motion.button
                       onClick={() => openAdvancedModal('hero_stats')}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0 * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      whileHover={{ 
+                        scale: 1.02, 
+                        boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)",
+                        transition: { duration: 0.2 } 
+                      }}
+                      whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
                       className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <BarChart3 className="w-5 h-5 text-cyan-400" />
-                        <span className="font-medium text-white">Hero Stats</span>
+                        <BarChart3 className="w-5 h-5 text-cyan-400 flex-shrink-0" />
+                        <span className="font-medium text-white flex-1">Hero Stats</span>
                       </div>
                       <div className="text-xs text-zinc-500">{landingSettings.hero_stats.length} items</div>
-                    </button>
+                    </motion.button>
                     
                     <button
                       onClick={() => openAdvancedModal('mission_cards')}
                       className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <Lightbulb className="w-5 h-5 text-yellow-400" />
-                        <span className="font-medium text-white">Mission Cards</span>
+                        <Lightbulb className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+                        <span className="font-medium text-white flex-1">Mission Cards</span>
                       </div>
                       <div className="text-xs text-zinc-500">{landingSettings.mission_cards.length} items</div>
                     </button>
@@ -705,8 +785,8 @@ export default function AdminPage() {
                       className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <Settings2 className="w-5 h-5 text-purple-400" />
-                        <span className="font-medium text-white">Core Stack Items</span>
+                        <Settings2 className="w-5 h-5 text-purple-400 flex-shrink-0" />
+                        <span className="font-medium text-white flex-1">Core Stack Items</span>
                       </div>
                       <div className="text-xs text-zinc-500">{landingSettings.core_stack_items.length} items</div>
                     </button>
@@ -716,8 +796,8 @@ export default function AdminPage() {
                       className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <Users className="w-5 h-5 text-emerald-400" />
-                        <span className="font-medium text-white">Team Filter Labels</span>
+                        <Users className="w-5 h-5 text-green-400 flex-shrink-0" />
+                        <span className="font-medium text-white flex-1">Team Filter Labels</span>
                       </div>
                       <div className="text-xs text-zinc-500">{landingSettings.team_filter_labels.length} items</div>
                     </button>
@@ -727,8 +807,8 @@ export default function AdminPage() {
                       className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <Award className="w-5 h-5 text-fuchsia-400" />
-                        <span className="font-medium text-white">Achievement Items</span>
+                        <Award className="w-5 h-5 text-purple-400 flex-shrink-0" />
+                        <span className="font-medium text-white flex-1">Achievement Items</span>
                       </div>
                       <div className="text-xs text-zinc-500">{landingSettings.achievement_items.length} items</div>
                     </button>
@@ -738,8 +818,8 @@ export default function AdminPage() {
                       className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <LinkIcon className="w-5 h-5 text-blue-400" />
-                        <span className="font-medium text-white">Contact Links</span>
+                        <LinkIcon className="w-5 h-5 text-pink-400 flex-shrink-0" />
+                        <span className="font-medium text-white flex-1">Contact Links</span>
                       </div>
                       <div className="text-xs text-zinc-500">{landingSettings.contact_links.length} items</div>
                     </button>
@@ -758,19 +838,41 @@ export default function AdminPage() {
       
       {/* Advanced Options Modal */}
       {showAdvancedModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#0a0a0f] border border-white/[0.1] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        >
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="bg-[#0a0a0f] border border-white/[0.1] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          >
             <div className="p-6 border-b border-white/[0.1]">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-white capitalize">
+                <motion.h2 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                  className="text-xl font-semibold text-white capitalize"
+                >
                   {editingSection?.replace('_', ' ')} Management
-                </h2>
-                <button
+                </motion.h2>
+                <motion.button
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
                   onClick={() => setShowAdvancedModal(false)}
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
                   className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.1] transition-all"
                 >
                   <X className="w-5 h-5" />
-                </button>
+                </motion.button>
               </div>
             </div>
             
@@ -1083,21 +1185,25 @@ export default function AdminPage() {
             </div>
             
             <div className="p-6 border-t border-white/[0.1] flex justify-end gap-3">
-              <button
+              <motion.button
                 onClick={() => setShowAdvancedModal(false)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className="px-4 py-2 rounded-lg border border-white/[0.2] text-zinc-300 hover:text-white hover:bg-white/[0.1] transition-all"
               >
                 Cancel
-              </button>
-              <button
+              </motion.button>
+              <motion.button
                 onClick={saveAdvancedSection}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className="px-4 py-2 rounded-lg bg-amber-500 text-[#0a0a0f] font-medium hover:bg-amber-400 transition-all"
               >
                 Save Changes
-              </button>
+              </motion.button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   );

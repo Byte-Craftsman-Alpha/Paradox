@@ -413,47 +413,6 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-6">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#6f6bff]/15 text-[#8b86ff]">
-                    <FolderGit2 className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-lg font-semibold text-white">Repository Highlights</div>
-                    <div className="text-sm text-[#8d94af]">Live GitHub sync data from the database.</div>
-                  </div>
-                </div>
-
-                {topRepos.length > 0 ? (
-                  <div className="mt-6 space-y-3">
-                    {topRepos.slice(0, 3).map((repo) => (
-                      <div key={`${repo.member_slug}-${repo.name}`} className="rounded-2xl border border-white/8 bg-black/20 p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <div className="text-sm font-semibold text-white">{repo.name}</div>
-                            <div className="mt-1 text-xs text-[#8d94af]">{repo.member_name}</div>
-                          </div>
-                          <a href={repo.url} target="_blank" rel="noopener" className="text-[#8b86ff] hover:text-[#b3afff]">
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        </div>
-                        <div className="mt-3 flex items-center gap-4 text-xs text-[#7f88a8]">
-                          <span>{repo.language || 'N/A'}</span>
-                          <span>{repo.stars || 0} stars</span>
-                          <span>{repo.forks || 0} forks</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="mt-6 rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-[#8d94af]">
-                    No synced repository data is available yet.
-                  </div>
-                )}
-              </div>
 
               <div className="rounded-3xl border border-white/8 bg-white/[0.03] p-6">
                 <div className="flex items-center gap-3">
