@@ -34,6 +34,16 @@ import {
   UserX,
   Users,
   XCircle,
+  Plus,
+  Trash2,
+  Edit,
+  X,
+  Lightbulb,
+  BookOpen,
+  HeartHandshake,
+  Mail,
+  ExternalLink as LinkIcon,
+  Calendar,
 } from 'lucide-react';
 import type { Member } from '../lib/auth';
 
@@ -135,6 +145,14 @@ export default function AdminPage() {
   const [savingLanding, setSavingLanding] = useState(false);
   const [search, setSearch] = useState('');
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [showAdvancedModal, setShowAdvancedModal] = useState(false);
+  const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [tempHeroStats, setTempHeroStats] = useState<any[]>([]);
+  const [tempMissionCards, setTempMissionCards] = useState<any[]>([]);
+  const [tempCoreStackItems, setTempCoreStackItems] = useState<string[]>([]);
+  const [tempTeamFilterLabels, setTempTeamFilterLabels] = useState<string[]>([]);
+  const [tempAchievementItems, setTempAchievementItems] = useState<any[]>([]);
+  const [tempContactLinks, setTempContactLinks] = useState<any[]>([]);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) navigate('/login');
@@ -261,6 +279,153 @@ export default function AdminPage() {
     }
   };
 
+  const openAdvancedModal = (section: string) => {
+    setEditingSection(section);
+    switch (section) {
+      case 'hero_stats':
+        setTempHeroStats(landingSettings.hero_stats);
+        break;
+      case 'mission_cards':
+        setTempMissionCards(landingSettings.mission_cards);
+        break;
+      case 'core_stack_items':
+        setTempCoreStackItems(landingSettings.core_stack_items);
+        break;
+      case 'team_filter_labels':
+        setTempTeamFilterLabels(landingSettings.team_filter_labels);
+        break;
+      case 'achievement_items':
+        setTempAchievementItems(landingSettings.achievement_items);
+        break;
+      case 'contact_links':
+        setTempContactLinks(landingSettings.contact_links);
+        break;
+    }
+    setShowAdvancedModal(true);
+  };
+
+  const saveAdvancedSection = () => {
+    const updatedSettings = { ...landingSettings };
+    const updatedDrafts = { ...advancedDrafts };
+    
+    switch (editingSection) {
+      case 'hero_stats':
+        updatedSettings.hero_stats = tempHeroStats;
+        updatedDrafts.hero_stats = toJson(tempHeroStats);
+        break;
+      case 'mission_cards':
+        updatedSettings.mission_cards = tempMissionCards;
+        updatedDrafts.mission_cards = toJson(tempMissionCards);
+        break;
+      case 'core_stack_items':
+        updatedSettings.core_stack_items = tempCoreStackItems;
+        updatedDrafts.core_stack_items = toJson(tempCoreStackItems);
+        break;
+      case 'team_filter_labels':
+        updatedSettings.team_filter_labels = tempTeamFilterLabels;
+        updatedDrafts.team_filter_labels = toJson(tempTeamFilterLabels);
+        break;
+      case 'achievement_items':
+        updatedSettings.achievement_items = tempAchievementItems;
+        updatedDrafts.achievement_items = toJson(tempAchievementItems);
+        break;
+      case 'contact_links':
+        updatedSettings.contact_links = tempContactLinks;
+        updatedDrafts.contact_links = toJson(tempContactLinks);
+        break;
+    }
+    
+    setLandingSettings(updatedSettings);
+    setAdvancedDrafts(updatedDrafts);
+    setShowAdvancedModal(false);
+    setEditingSection(null);
+    showMessage('success', `${editingSection?.replace('_', ' ') || 'section'} updated successfully`);
+  };
+
+  const addHeroStat = () => {
+    setTempHeroStats([...tempHeroStats, { label: '', type: 'members' }]);
+  };
+
+  const removeHeroStat = (index: number) => {
+    setTempHeroStats(tempHeroStats.filter((_, i) => i !== index));
+  };
+
+  const updateHeroStat = (index: number, field: string, value: string) => {
+    const updated = [...tempHeroStats];
+    updated[index] = { ...updated[index], [field]: value };
+    setTempHeroStats(updated);
+  };
+
+  const addMissionCard = () => {
+    setTempMissionCards([...tempMissionCards, { icon: 'Lightbulb', title: '', description: '' }]);
+  };
+
+  const removeMissionCard = (index: number) => {
+    setTempMissionCards(tempMissionCards.filter((_, i) => i !== index));
+  };
+
+  const updateMissionCard = (index: number, field: string, value: string) => {
+    const updated = [...tempMissionCards];
+    updated[index] = { ...updated[index], [field]: value };
+    setTempMissionCards(updated);
+  };
+
+  const addCoreStackItem = () => {
+    setTempCoreStackItems([...tempCoreStackItems, '']);
+  };
+
+  const removeCoreStackItem = (index: number) => {
+    setTempCoreStackItems(tempCoreStackItems.filter((_, i) => i !== index));
+  };
+
+  const updateCoreStackItem = (index: number, value: string) => {
+    const updated = [...tempCoreStackItems];
+    updated[index] = value;
+    setTempCoreStackItems(updated);
+  };
+
+  const addTeamFilterLabel = () => {
+    setTempTeamFilterLabels([...tempTeamFilterLabels, '']);
+  };
+
+  const removeTeamFilterLabel = (index: number) => {
+    setTempTeamFilterLabels(tempTeamFilterLabels.filter((_, i) => i !== index));
+  };
+
+  const updateTeamFilterLabel = (index: number, value: string) => {
+    const updated = [...tempTeamFilterLabels];
+    updated[index] = value;
+    setTempTeamFilterLabels(updated);
+  };
+
+  const addAchievementItem = () => {
+    setTempAchievementItems([...tempAchievementItems, { date: '', title: '', description: '' }]);
+  };
+
+  const removeAchievementItem = (index: number) => {
+    setTempAchievementItems(tempAchievementItems.filter((_, i) => i !== index));
+  };
+
+  const updateAchievementItem = (index: number, field: string, value: string) => {
+    const updated = [...tempAchievementItems];
+    updated[index] = { ...updated[index], [field]: value };
+    setTempAchievementItems(updated);
+  };
+
+  const addContactLink = () => {
+    setTempContactLinks([...tempContactLinks, { label: '', type: 'email', href: '' }]);
+  };
+
+  const removeContactLink = (index: number) => {
+    setTempContactLinks(tempContactLinks.filter((_, i) => i !== index));
+  };
+
+  const updateContactLink = (index: number, field: string, value: string) => {
+    const updated = [...tempContactLinks];
+    updated[index] = { ...updated[index], [field]: value };
+    setTempContactLinks(updated);
+  };
+
   if (authLoading || loading) return <div className="pt-24"><LoadingSpinner text="Loading admin panel..." /></div>;
   if (!isAdmin) return null;
 
@@ -280,7 +445,6 @@ export default function AdminPage() {
 
   const inputClass = 'w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-amber-500/40 transition-all';
   const labelClass = 'mb-1.5 block text-sm font-medium text-zinc-300';
-  const textareaClass = `${inputClass} min-h-[180px] font-mono text-xs`;
 
   return (
     <div className="min-h-screen pt-20 pb-16">
@@ -516,18 +680,79 @@ export default function AdminPage() {
 
                 <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
                   <h3 className="text-lg font-semibold text-white mb-4">Advanced Options</h3>
-                  <p className="text-sm text-zinc-400 mb-4">Maintain mission tiles, core stack, team chips, achievements, stat tiles, and contact links with JSON arrays.</p>
-                  <div className="space-y-4">
-                    <div><label className={labelClass}>Hero Stats</label><textarea value={advancedDrafts.hero_stats} onChange={(e) => setAdvancedDrafts({ ...advancedDrafts, hero_stats: e.target.value })} className={textareaClass} /></div>
-                    <div><label className={labelClass}>Mission Cards</label><textarea value={advancedDrafts.mission_cards} onChange={(e) => setAdvancedDrafts({ ...advancedDrafts, mission_cards: e.target.value })} className={textareaClass} /></div>
-                    <div><label className={labelClass}>Core Stack Items</label><textarea value={advancedDrafts.core_stack_items} onChange={(e) => setAdvancedDrafts({ ...advancedDrafts, core_stack_items: e.target.value })} className={textareaClass} /></div>
-                    <div><label className={labelClass}>Team Filter Labels</label><textarea value={advancedDrafts.team_filter_labels} onChange={(e) => setAdvancedDrafts({ ...advancedDrafts, team_filter_labels: e.target.value })} className={textareaClass} /></div>
-                    <div><label className={labelClass}>Achievement Items</label><textarea value={advancedDrafts.achievement_items} onChange={(e) => setAdvancedDrafts({ ...advancedDrafts, achievement_items: e.target.value })} className={textareaClass} /></div>
-                    <div><label className={labelClass}>Contact Links</label><textarea value={advancedDrafts.contact_links} onChange={(e) => setAdvancedDrafts({ ...advancedDrafts, contact_links: e.target.value })} className={textareaClass} /></div>
+                  <p className="text-sm text-zinc-400 mb-6">Manage mission tiles, core stack, team chips, achievements, stat tiles, and contact links.</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button
+                      onClick={() => openAdvancedModal('hero_stats')}
+                      className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <BarChart3 className="w-5 h-5 text-cyan-400" />
+                        <span className="font-medium text-white">Hero Stats</span>
+                      </div>
+                      <div className="text-xs text-zinc-500">{landingSettings.hero_stats.length} items</div>
+                    </button>
+                    
+                    <button
+                      onClick={() => openAdvancedModal('mission_cards')}
+                      className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <Lightbulb className="w-5 h-5 text-yellow-400" />
+                        <span className="font-medium text-white">Mission Cards</span>
+                      </div>
+                      <div className="text-xs text-zinc-500">{landingSettings.mission_cards.length} items</div>
+                    </button>
+                    
+                    <button
+                      onClick={() => openAdvancedModal('core_stack_items')}
+                      className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <Settings2 className="w-5 h-5 text-purple-400" />
+                        <span className="font-medium text-white">Core Stack Items</span>
+                      </div>
+                      <div className="text-xs text-zinc-500">{landingSettings.core_stack_items.length} items</div>
+                    </button>
+                    
+                    <button
+                      onClick={() => openAdvancedModal('team_filter_labels')}
+                      className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <Users className="w-5 h-5 text-emerald-400" />
+                        <span className="font-medium text-white">Team Filter Labels</span>
+                      </div>
+                      <div className="text-xs text-zinc-500">{landingSettings.team_filter_labels.length} items</div>
+                    </button>
+                    
+                    <button
+                      onClick={() => openAdvancedModal('achievement_items')}
+                      className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <Award className="w-5 h-5 text-fuchsia-400" />
+                        <span className="font-medium text-white">Achievement Items</span>
+                      </div>
+                      <div className="text-xs text-zinc-500">{landingSettings.achievement_items.length} items</div>
+                    </button>
+                    
+                    <button
+                      onClick={() => openAdvancedModal('contact_links')}
+                      className="p-4 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all text-left"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <LinkIcon className="w-5 h-5 text-blue-400" />
+                        <span className="font-medium text-white">Contact Links</span>
+                      </div>
+                      <div className="text-xs text-zinc-500">{landingSettings.contact_links.length} items</div>
+                    </button>
                   </div>
-                  <button onClick={handleSaveLanding} disabled={savingLanding} className="mt-6 inline-flex items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.08] disabled:opacity-50">
+                  
+                  <button onClick={handleSaveLanding} disabled={savingLanding} className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.08] disabled:opacity-50">
                     <Globe className="w-4 h-4" />
-                    {savingLanding ? 'Saving...' : 'Save Advanced Options'}
+                    {savingLanding ? 'Saving...' : 'Save All Changes'}
                   </button>
                 </div>
               </div>
@@ -535,6 +760,350 @@ export default function AdminPage() {
           </motion.div>
         )}
       </div>
+      
+      {/* Advanced Options Modal */}
+      {showAdvancedModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#0a0a0f] border border-white/[0.1] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-white/[0.1]">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-white capitalize">
+                  {editingSection?.replace('_', ' ')} Management
+                </h2>
+                <button
+                  onClick={() => setShowAdvancedModal(false)}
+                  className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.1] transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-6">
+              {/* Hero Stats Editor */}
+              {editingSection === 'hero_stats' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium text-white">Hero Stats Items</h3>
+                    <button
+                      onClick={addHeroStat}
+                      className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-[#0a0a0f] rounded-lg font-medium hover:bg-amber-400 transition-all"
+                    >
+                      <Plus className="w-4 h-4" /> Add Item
+                    </button>
+                  </div>
+                  {tempHeroStats.map((stat, index) => (
+                    <div key={index} className="p-4 border border-white/[0.1] rounded-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-zinc-300">Item {index + 1}</span>
+                        <button
+                          onClick={() => removeHeroStat(index)}
+                          className="p-1.5 rounded text-red-400 hover:bg-red-400/10 transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">Label</label>
+                          <input
+                            type="text"
+                            value={stat.label}
+                            onChange={(e) => updateHeroStat(index, 'label', e.target.value)}
+                            className={inputClass}
+                            placeholder="e.g., Team Members"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">Type</label>
+                          <select
+                            value={stat.type}
+                            onChange={(e) => updateHeroStat(index, 'type', e.target.value)}
+                            className={inputClass}
+                          >
+                            <option value="members">Members</option>
+                            <option value="github_profiles">GitHub Profiles</option>
+                            <option value="projects_repos">Projects/Repos</option>
+                            <option value="certificates">Certificates</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Mission Cards Editor */}
+              {editingSection === 'mission_cards' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium text-white">Mission Cards</h3>
+                    <button
+                      onClick={addMissionCard}
+                      className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-[#0a0a0f] rounded-lg font-medium hover:bg-amber-400 transition-all"
+                    >
+                      <Plus className="w-4 h-4" /> Add Card
+                    </button>
+                  </div>
+                  {tempMissionCards.map((card, index) => (
+                    <div key={index} className="p-4 border border-white/[0.1] rounded-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-zinc-300">Card {index + 1}</span>
+                        <button
+                          onClick={() => removeMissionCard(index)}
+                          className="p-1.5 rounded text-red-400 hover:bg-red-400/10 transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">Icon</label>
+                          <select
+                            value={card.icon}
+                            onChange={(e) => updateMissionCard(index, 'icon', e.target.value)}
+                            className={inputClass}
+                          >
+                            <option value="Github">GitHub</option>
+                            <option value="Lightbulb">Lightbulb</option>
+                            <option value="BookOpen">Book Open</option>
+                            <option value="HeartHandshake">Heart Handshake</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">Title</label>
+                          <input
+                            type="text"
+                            value={card.title}
+                            onChange={(e) => updateMissionCard(index, 'title', e.target.value)}
+                            className={inputClass}
+                            placeholder="e.g., Open Source"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">Description</label>
+                          <textarea
+                            value={card.description}
+                            onChange={(e) => updateMissionCard(index, 'description', e.target.value)}
+                            className={`${inputClass} min-h-[80px]`}
+                            placeholder="Describe this mission..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Core Stack Items Editor */}
+              {editingSection === 'core_stack_items' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium text-white">Core Stack Items</h3>
+                    <button
+                      onClick={addCoreStackItem}
+                      className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-[#0a0a0f] rounded-lg font-medium hover:bg-amber-400 transition-all"
+                    >
+                      <Plus className="w-4 h-4" /> Add Item
+                    </button>
+                  </div>
+                  {tempCoreStackItems.map((item, index) => (
+                    <div key={index} className="p-4 border border-white/[0.1] rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="text"
+                          value={item}
+                          onChange={(e) => updateCoreStackItem(index, e.target.value)}
+                          className={`${inputClass} flex-1`}
+                          placeholder="e.g., React/Next.js"
+                        />
+                        <button
+                          onClick={() => removeCoreStackItem(index)}
+                          className="p-1.5 rounded text-red-400 hover:bg-red-400/10 transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Team Filter Labels Editor */}
+              {editingSection === 'team_filter_labels' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium text-white">Team Filter Labels</h3>
+                    <button
+                      onClick={addTeamFilterLabel}
+                      className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-[#0a0a0f] rounded-lg font-medium hover:bg-amber-400 transition-all"
+                    >
+                      <Plus className="w-4 h-4" /> Add Label
+                    </button>
+                  </div>
+                  {tempTeamFilterLabels.map((label, index) => (
+                    <div key={index} className="p-4 border border-white/[0.1] rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="text"
+                          value={label}
+                          onChange={(e) => updateTeamFilterLabel(index, e.target.value)}
+                          className={`${inputClass} flex-1`}
+                          placeholder="e.g., Developers"
+                        />
+                        <button
+                          onClick={() => removeTeamFilterLabel(index)}
+                          className="p-1.5 rounded text-red-400 hover:bg-red-400/10 transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Achievement Items Editor */}
+              {editingSection === 'achievement_items' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium text-white">Achievement Items</h3>
+                    <button
+                      onClick={addAchievementItem}
+                      className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-[#0a0a0f] rounded-lg font-medium hover:bg-amber-400 transition-all"
+                    >
+                      <Plus className="w-4 h-4" /> Add Achievement
+                    </button>
+                  </div>
+                  {tempAchievementItems.map((item, index) => (
+                    <div key={index} className="p-4 border border-white/[0.1] rounded-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-zinc-300">Achievement {index + 1}</span>
+                        <button
+                          onClick={() => removeAchievementItem(index)}
+                          className="p-1.5 rounded text-red-400 hover:bg-red-400/10 transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">Date</label>
+                          <input
+                            type="text"
+                            value={item.date}
+                            onChange={(e) => updateAchievementItem(index, 'date', e.target.value)}
+                            className={inputClass}
+                            placeholder="e.g., Live Data"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">Title</label>
+                          <input
+                            type="text"
+                            value={item.title}
+                            onChange={(e) => updateAchievementItem(index, 'title', e.target.value)}
+                            className={inputClass}
+                            placeholder="e.g., Member directory is active"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">Description</label>
+                          <textarea
+                            value={item.description}
+                            onChange={(e) => updateAchievementItem(index, 'description', e.target.value)}
+                            className={`${inputClass} min-h-[80px]`}
+                            placeholder="Describe this achievement..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Contact Links Editor */}
+              {editingSection === 'contact_links' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium text-white">Contact Links</h3>
+                    <button
+                      onClick={addContactLink}
+                      className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-[#0a0a0f] rounded-lg font-medium hover:bg-amber-400 transition-all"
+                    >
+                      <Plus className="w-4 h-4" /> Add Link
+                    </button>
+                  </div>
+                  {tempContactLinks.map((link, index) => (
+                    <div key={index} className="p-4 border border-white/[0.1] rounded-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-zinc-300">Link {index + 1}</span>
+                        <button
+                          onClick={() => removeContactLink(index)}
+                          className="p-1.5 rounded text-red-400 hover:bg-red-400/10 transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">Label</label>
+                          <input
+                            type="text"
+                            value={link.label}
+                            onChange={(e) => updateContactLink(index, 'label', e.target.value)}
+                            className={inputClass}
+                            placeholder="e.g., GitHub"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">Type</label>
+                          <select
+                            value={link.type}
+                            onChange={(e) => updateContactLink(index, 'type', e.target.value)}
+                            className={inputClass}
+                          >
+                            <option value="member_github">Member GitHub</option>
+                            <option value="member_linkedin">Member LinkedIn</option>
+                            <option value="member_twitter">Member Twitter</option>
+                            <option value="member_website">Member Website</option>
+                            <option value="email">Email</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-zinc-400 mb-1">URL (optional)</label>
+                          <input
+                            type="text"
+                            value={link.href || ''}
+                            onChange={(e) => updateContactLink(index, 'href', e.target.value)}
+                            className={inputClass}
+                            placeholder="https://..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div className="p-6 border-t border-white/[0.1] flex justify-end gap-3">
+              <button
+                onClick={() => setShowAdvancedModal(false)}
+                className="px-4 py-2 rounded-lg border border-white/[0.2] text-zinc-300 hover:text-white hover:bg-white/[0.1] transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveAdvancedSection}
+                className="px-4 py-2 rounded-lg bg-amber-500 text-[#0a0a0f] font-medium hover:bg-amber-400 transition-all"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
