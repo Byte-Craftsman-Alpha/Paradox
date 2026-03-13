@@ -36,14 +36,9 @@ import {
   XCircle,
   Plus,
   Trash2,
-  Edit,
   X,
   Lightbulb,
-  BookOpen,
-  HeartHandshake,
-  Mail,
   ExternalLink as LinkIcon,
-  Calendar,
 } from 'lucide-react';
 import type { Member } from '../lib/auth';
 
@@ -866,8 +861,8 @@ export default function AdminPage() {
                           >
                             <option value="Github">GitHub</option>
                             <option value="Lightbulb">Lightbulb</option>
-                            <option value="BookOpen">Book Open</option>
-                            <option value="HeartHandshake">Heart Handshake</option>
+                            <option value="Star">Star</option>
+                            <option value="Settings2">Settings</option>
                           </select>
                         </div>
                         <div>
