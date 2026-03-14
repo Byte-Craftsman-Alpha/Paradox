@@ -536,7 +536,7 @@ export default function DashboardPage() {
                       value={form.aboutme_url}
                       onChange={e => setForm({ ...form, aboutme_url: e.target.value })}
                       className={inputClass + ' flex-1'}
-                      placeholder="https://raw.githubusercontent.com/Anshika9838/Anshika9838/refs/heads/main/aboutme.json"
+                      placeholder="Paste the raw aboutme.json URL"
                     />
                     <button
                       onClick={handleAboutMeSync}
@@ -554,16 +554,9 @@ export default function DashboardPage() {
                     >
                       Export my aboutme.json
                     </button>
-                    <a
-                      href="/aboutme.demo.json"
-                      download
-                      className="px-4 py-2 rounded-xl bg-white/[0.06] text-zinc-300 text-xs font-medium hover:text-white hover:bg-white/[0.1] transition-all"
-                    >
-                      Download demo aboutme.json
-                    </a>
                   </div>
                   <p className="text-xs text-zinc-500 mt-2">
-                    Paste the raw <code>aboutme.json</code> URL (for example, https://raw.githubusercontent.com/Anshika9838/Anshika9838/refs/heads/main/aboutme.json) to mirror your published profile.
+                    Paste the raw <code>aboutme.json</code> URL to mirror your published profile.
                     Updates replace experience, education, projects, and certificates with the values from the file.
                   </p>
                 </div>
