@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Alex Johnson",
+    "profile_photo": "https://avatars.githubusercontent.com/u/583231",
+    "current_profession": "Frontend Engineer",
+    "current_company": "Acme Labs",
+    "resume_link": "https://example.com/resume.pdf",
+    "contact": {
+      "phone": "+1-555-0101",
+      "email": "alex.johnson@example.com"
+    },
+    "address": {
+      "city": "Austin, TX",
+      "permanent_address": null,
+      "current_address": null
+    },
+    "social_accounts": {
+      "github": "https://github.com/octocat",
+      "linkedin": "https://www.linkedin.com/in/octocat/",
+      "instagram": "",
+      "twitter": "https://twitter.com/octocat"
+    },
+    "bio": "Product-focused frontend engineer building fast, accessible web apps.",
+    "skills": [
+      "React",
+      "TypeScript",
+      "CSS",
+      "Node.js"
+    ],
+    "experience": [
+      {
+        "designation": "Frontend Engineer",
+        "company_name": "Acme Labs",
+        "date": "2023-2025",
+        "location": "Austin, TX",
+        "work_description": "Led UI modernization and improved core web vitals."
+      }
+    ],
+    "education": [
+      {
+        "institute_logo": null,
+        "institute_name": "State University",
+        "course_type": "B.Tech",
+        "course_name": "Computer Science",
+        "date": "2019-2023",
+        "score": "3.8 GPA",
+        "skill_acquired": [
+          "Data Structures",
+          "Operating Systems"
+        ]
+      }
+    ],
+    "projects": [
+      {
+        "project_title": "PulseBoard",
+        "project_type": "Public",
+        "project_description": "Realtime analytics dashboard for product teams.",
+        "core_technology": "React",
+        "repository": "https://github.com/octocat/pulseboard",
+        "project_link": "https://pulseboard.example.com"
+      }
+    ],
+    "certificates": [
+      {
+        "authority_logo": "",
+        "certificate_name": "Cloud Practitioner",
+        "issuing_authority": "AWS",
+        "certified_for": "Foundational"
+      }
+    ]
+  }
+]

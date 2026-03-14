@@ -22,6 +22,7 @@ export interface Member {
   twitter_handle: string;
   dribbble_url: string;
   resume_url: string;
+  aboutme_url: string;
   skills: string[];
   github_data: any;
   is_approved: boolean;

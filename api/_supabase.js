@@ -127,6 +127,7 @@ const schemaStatements = [
     twitter_handle TEXT NOT NULL DEFAULT '',
     dribbble_url TEXT NOT NULL DEFAULT '',
     resume_url TEXT NOT NULL DEFAULT '',
+    aboutme_url TEXT NOT NULL DEFAULT '',
     skills TEXT NOT NULL DEFAULT '[]',
     github_data TEXT,
     is_approved INTEGER NOT NULL DEFAULT 0,
@@ -300,6 +301,16 @@ async function initializeDatabase() {
     const exists = (pragma.rows || []).some((row) => row.name === column[0]);
     if (!exists) {
       await execStatement(`ALTER TABLE pending_registrations ADD COLUMN ${column[0]} ${column[1]}`);
+    }
+  }
+
+  for (const column of [
+    ['aboutme_url', `TEXT NOT NULL DEFAULT ''`],
+  ]) {
+    const pragma = await execStatement(`PRAGMA table_info(team_members)`);
+    const exists = (pragma.rows || []).some((row) => row.name === column[0]);
+    if (!exists) {
+      await execStatement(`ALTER TABLE team_members ADD COLUMN ${column[0]} ${column[1]}`);
     }
   }
 

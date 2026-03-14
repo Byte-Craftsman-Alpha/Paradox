@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../lib/AuthContext';
-import { updateMember, fetchEducation, fetchExperience, fetchProjects, fetchCertificates, createEducation, deleteEducation, createExperience, deleteExperience, createProject, deleteProject, createCertificate, deleteCertificate, syncGitHub } from '../lib/api';
+import { updateMember, fetchEducation, fetchExperience, fetchProjects, fetchCertificates, createEducation, deleteEducation, createExperience, deleteExperience, createProject, deleteProject, createCertificate, deleteCertificate, syncGitHub, syncAboutMe } from '../lib/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import {
   Save, Github, RefreshCw, Plus, Trash2, User, Briefcase, GraduationCap,
@@ -16,6 +16,10 @@ export default function DashboardPage() {
   const [activeSection, setActiveSection] = useState('profile');
   const [saving, setSaving] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [syncingAboutMe, setSyncingAboutMe] = useState(false);
+  const [aboutMeConfirmOpen, setAboutMeConfirmOpen] = useState(false);
+  const [aboutMeConfirmUrl, setAboutMeConfirmUrl] = useState('');
+  const [aboutMeConfirmSummary, setAboutMeConfirmSummary] = useState<{ name: string; skills: number; experience: number; education: number; projects: number; certificates: number } | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Profile form
@@ -23,6 +27,7 @@ export default function DashboardPage() {
     full_name: '', title: '', bio: '', location: '', phone: '',
     website: '', github_username: '', linkedin_url: '', twitter_handle: '',
     dribbble_url: '', resume_url: '', skills: '',
+    aboutme_url: '',
   });
 
   // Sub-data
@@ -56,6 +61,7 @@ export default function DashboardPage() {
         twitter_handle: member.twitter_handle || '',
         dribbble_url: member.dribbble_url || '',
         resume_url: member.resume_url || '',
+        aboutme_url: member.aboutme_url || '',
         skills: skills.join(', '),
       });
       loadSubData(member.id);
@@ -116,6 +122,184 @@ export default function DashboardPage() {
       showMsg('error', err.message);
     } finally {
       setSyncing(false);
+    }
+  };
+
+  const buildAboutMePayload = () => {
+    const profile = {
+      name: form.full_name || member?.full_name || '',
+      profile_photo: member?.avatar_url || '',
+      current_profession: form.title || member?.title || '',
+      current_company: '',
+      resume_link: form.resume_url || member?.resume_url || '',
+      contact: {
+        phone: form.phone || member?.phone || '',
+        email: user?.email || '',
+      },
+      address: {
+        city: form.location || member?.location || '',
+        permanent_address: null,
+        current_address: null,
+      },
+      social_accounts: {
+        github: form.github_username ? `https://github.com/${form.github_username}` : '',
+        linkedin: form.linkedin_url || '',
+        instagram: '',
+        twitter: form.twitter_handle ? `https://twitter.com/${form.twitter_handle.replace(/^@+/, '')}` : '',
+      },
+      bio: form.bio || member?.bio || '',
+      skills: form.skills.split(',').map(s => s.trim()).filter(Boolean),
+      experience: experience.map((exp: any) => ({
+        designation: exp.position || exp.role || '',
+        company_name: exp.company || '',
+        date: [exp.start_date, exp.end_date].filter(Boolean).join('-'),
+        location: exp.location || '',
+        work_description: exp.description || '',
+      })),
+      education: education.map((edu: any) => ({
+        institute_logo: null,
+        institute_name: edu.institution || '',
+        course_type: edu.degree || '',
+        course_name: edu.field_of_study || '',
+        date: [edu.start_date, edu.end_date].filter(Boolean).join('-'),
+        score: edu.gpa || null,
+        skill_acquired: null,
+      })),
+      projects: projects.map((proj: any) => ({
+        project_title: proj.title || '',
+        project_type: proj.is_featured ? 'Featured' : 'Public',
+        project_description: proj.description || '',
+        core_technology: Array.isArray(proj.tech_stack) ? proj.tech_stack[0] || '' : '',
+        repository: proj.repo_url || '',
+        project_link: proj.live_url || '',
+      })),
+      certificates: certificates.map((cert: any) => ({
+        authority_logo: '',
+        certificate_name: cert.title || '',
+        issuing_authority: cert.issuer || '',
+        certified_for: '',
+      })),
+    };
+
+    return [profile];
+  };
+
+  const downloadAboutMeJson = (data: any, filename: string) => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportAboutMe = () => {
+    const payload = buildAboutMePayload();
+    downloadAboutMeJson(payload, 'aboutme.json');
+    showMsg('success', 'aboutme.json exported!');
+  };
+
+  const normalizeAboutMePayload = (payload: any) => {
+    if (Array.isArray(payload)) return payload[0] || {};
+    return payload || {};
+  };
+
+  const isStringArray = (value: any) => Array.isArray(value) && value.every((item) => typeof item === 'string');
+
+  const validateAboutMePayload = (payload: any) => {
+    const errors: string[] = [];
+    const base = normalizeAboutMePayload(payload);
+
+    if (!base || typeof base !== 'object') {
+      return { ok: false, errors: ['aboutme.json root must be an object or array with an object'], base: {} };
+    }
+
+    if (!base.name || typeof base.name !== 'string') {
+      errors.push('Missing or invalid `name` (string expected).');
+    }
+
+    if (base.skills !== undefined && !isStringArray(base.skills)) {
+      errors.push('`skills` should be an array of strings.');
+    }
+
+    for (const key of ['experience', 'education', 'projects', 'certificates']) {
+      if (base[key] !== undefined && !Array.isArray(base[key])) {
+        errors.push(`\`${key}\` should be an array.`);
+      }
+    }
+
+    if (base.contact !== undefined && typeof base.contact !== 'object') {
+      errors.push('`contact` should be an object with contact details.');
+    }
+
+    if (base.social_accounts !== undefined && typeof base.social_accounts !== 'object') {
+      errors.push('`social_accounts` should be an object with profile links.');
+    }
+
+    return { ok: errors.length === 0, errors, base };
+  };
+
+  const openAboutMeConfirm = (url: string, base: any) => {
+    setAboutMeConfirmUrl(url);
+    setAboutMeConfirmSummary({
+      name: typeof base?.name === 'string' ? base.name : '',
+      skills: Array.isArray(base?.skills) ? base.skills.length : 0,
+      experience: Array.isArray(base?.experience) ? base.experience.length : 0,
+      education: Array.isArray(base?.education) ? base.education.length : 0,
+      projects: Array.isArray(base?.projects) ? base.projects.length : 0,
+      certificates: Array.isArray(base?.certificates) ? base.certificates.length : 0,
+    });
+    setAboutMeConfirmOpen(true);
+  };
+
+  const closeAboutMeConfirm = () => {
+    setAboutMeConfirmOpen(false);
+  };
+
+  const confirmAboutMeSync = async () => {
+    if (!member || !aboutMeConfirmUrl) return;
+    setAboutMeConfirmOpen(false);
+    setSyncingAboutMe(true);
+    try {
+      await syncAboutMe(member.id, aboutMeConfirmUrl);
+      await refreshAuth();
+      if (member) await loadSubData(member.id);
+      showMsg('success', 'Profile synced from aboutme.json!');
+    } catch (err: any) {
+      showMsg('error', err.message);
+    } finally {
+      setSyncingAboutMe(false);
+    }
+  };
+
+  const handleAboutMeSync = async () => {
+    if (!member || !form.aboutme_url) return;
+    setSyncingAboutMe(true);
+    try {
+      let payload: any;
+      try {
+        const res = await fetch(form.aboutme_url.trim());
+        if (!res.ok) throw new Error(`Unable to fetch aboutme.json (status ${res.status})`);
+        payload = await res.json();
+      } catch (err: any) {
+        throw new Error(err?.message || 'Failed to fetch or parse aboutme.json');
+      }
+
+      const validation = validateAboutMePayload(payload);
+      if (!validation.ok) {
+        showMsg('error', `Validation failed: ${validation.errors.join(' ')}`);
+        return;
+      }
+
+      setSyncingAboutMe(false);
+      openAboutMeConfirm(form.aboutme_url.trim(), validation.base);
+    } catch (err: any) {
+      showMsg('error', err.message);
+    } finally {
+      setSyncingAboutMe(false);
     }
   };
 
@@ -212,7 +396,65 @@ export default function DashboardPage() {
   const labelClass = "block text-sm font-medium text-zinc-300 mb-1.5";
 
   return (
-    <div className="min-h-screen pt-20 pb-16">
+    <>
+      {aboutMeConfirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={closeAboutMeConfirm} />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="relative w-full max-w-lg rounded-2xl border border-white/[0.12] bg-[#0b0b12] p-6 shadow-xl"
+          >
+            <h3 className="text-lg font-semibold text-white">Confirm AboutMe Sync</h3>
+            <p className="text-sm text-zinc-400 mt-2">
+              This will overwrite your experience, education, projects, and certificates with data from the provided
+              aboutme.json file.
+            </p>
+
+            {aboutMeConfirmSummary && (
+              <div className="mt-4 rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 text-sm text-zinc-300 space-y-2">
+                {aboutMeConfirmSummary.name && (
+                  <div>
+                    <span className="text-zinc-500">Name:</span> {aboutMeConfirmSummary.name}
+                  </div>
+                )}
+                <div>
+                  <span className="text-zinc-500">Skills:</span> {aboutMeConfirmSummary.skills}
+                </div>
+                <div>
+                  <span className="text-zinc-500">Experience:</span> {aboutMeConfirmSummary.experience}
+                </div>
+                <div>
+                  <span className="text-zinc-500">Education:</span> {aboutMeConfirmSummary.education}
+                </div>
+                <div>
+                  <span className="text-zinc-500">Projects:</span> {aboutMeConfirmSummary.projects}
+                </div>
+                <div>
+                  <span className="text-zinc-500">Certificates:</span> {aboutMeConfirmSummary.certificates}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                onClick={closeAboutMeConfirm}
+                className="px-4 py-2 rounded-xl bg-white/[0.06] text-zinc-300 text-sm font-medium hover:text-white hover:bg-white/[0.1] transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmAboutMeSync}
+                className="px-4 py-2 rounded-xl bg-emerald-500 text-[#0a0a0f] text-sm font-semibold hover:bg-emerald-400 transition-all"
+              >
+                Sync Profile
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      <div className="min-h-screen pt-20 pb-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
@@ -273,24 +515,62 @@ export default function DashboardPage() {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                 <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
                   <h2 className="text-lg font-semibold text-white mb-5 flex items-center gap-2"><RefreshCw className="w-5 h-5 text-emerald-400" /> Quick Sync</h2>
-                  <div>
-                    <label className={labelClass}><Github className="w-3.5 h-3.5 inline mr-1" />GitHub Username</label>
-                    <div className="flex gap-3">
-                      <input value={form.github_username} onChange={e => setForm({...form, github_username: e.target.value})} className={inputClass + ' flex-1'} placeholder="GitHub username" />
-                      <button
-                        onClick={handleGitHubSync}
-                        disabled={syncing || !form.github_username}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 text-white text-sm font-medium hover:bg-zinc-700 disabled:opacity-50 transition-all"
-                      >
-                        <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-                        {syncing ? 'Syncing...' : 'Sync GitHub'}
-                      </button>
-                    </div>
+                <div>
+                  <label className={labelClass}><Github className="w-3.5 h-3.5 inline mr-1" />GitHub Username</label>
+                  <div className="flex gap-3">
+                    <input value={form.github_username} onChange={e => setForm({...form, github_username: e.target.value})} className={inputClass + ' flex-1'} placeholder="GitHub username" />
+                    <button
+                      onClick={handleGitHubSync}
+                      disabled={syncing || !form.github_username}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 text-white text-sm font-medium hover:bg-zinc-700 disabled:opacity-50 transition-all"
+                    >
+                      <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+                      {syncing ? 'Syncing...' : 'Sync GitHub'}
+                    </button>
                   </div>
-                  <p className="text-xs text-zinc-500 mt-3">
-                    Sync first to auto-fill profile details, avatar, and project data from GitHub.
+                </div>
+                <div className="mt-4">
+                  <label className={labelClass}><FileText className="w-3.5 h-3.5 inline mr-1" />AboutMe JSON URL</label>
+                  <div className="flex gap-3">
+                    <input
+                      value={form.aboutme_url}
+                      onChange={e => setForm({ ...form, aboutme_url: e.target.value })}
+                      className={inputClass + ' flex-1'}
+                      placeholder="https://raw.githubusercontent.com/Anshika9838/Anshika9838/refs/heads/main/aboutme.json"
+                    />
+                    <button
+                      onClick={handleAboutMeSync}
+                      disabled={syncingAboutMe || !form.aboutme_url}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-zinc-800 text-white text-sm font-medium hover:bg-zinc-700 disabled:opacity-50 transition-all"
+                    >
+                      <RefreshCw className={`w-4 h-4 ${syncingAboutMe ? 'animate-spin' : ''}`} />
+                      {syncingAboutMe ? 'Syncing...' : 'Sync aboutme.json'}
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-3 mt-3">
+                    <button
+                      onClick={handleExportAboutMe}
+                      className="px-4 py-2 rounded-xl bg-white/[0.06] text-zinc-300 text-xs font-medium hover:text-white hover:bg-white/[0.1] transition-all"
+                    >
+                      Export my aboutme.json
+                    </button>
+                    <a
+                      href="/aboutme.demo.json"
+                      download
+                      className="px-4 py-2 rounded-xl bg-white/[0.06] text-zinc-300 text-xs font-medium hover:text-white hover:bg-white/[0.1] transition-all"
+                    >
+                      Download demo aboutme.json
+                    </a>
+                  </div>
+                  <p className="text-xs text-zinc-500 mt-2">
+                    Paste the raw <code>aboutme.json</code> URL (for example, https://raw.githubusercontent.com/Anshika9838/Anshika9838/refs/heads/main/aboutme.json) to mirror your published profile.
+                    Updates replace experience, education, projects, and certificates with the values from the file.
                   </p>
                 </div>
+                <p className="text-xs text-zinc-500 mt-3">
+                  Sync first to auto-fill profile details, avatar, and project data from GitHub.
+                </p>
+              </div>
 
                 <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
                   <h2 className="text-lg font-semibold text-white mb-5 flex items-center gap-2"><User className="w-5 h-5 text-emerald-400" /> Basic Info</h2>
@@ -454,6 +734,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

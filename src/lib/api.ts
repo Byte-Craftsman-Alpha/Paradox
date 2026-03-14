@@ -117,6 +117,14 @@ export async function syncGitHub(memberId: number, username: string) {
   });
 }
 
+export async function syncAboutMe(memberId: number, url: string) {
+  return requestJson('/api/aboutme-sync', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ member_id: memberId, aboutme_url: url }),
+  });
+}
+
 export async function fetchAdminStats() {
   return requestJson('/api/admin/stats', { headers: authHeaders() });
 }
