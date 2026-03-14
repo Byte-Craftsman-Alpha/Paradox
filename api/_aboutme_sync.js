@@ -1,12 +1,3 @@
-import supabase from './_supabase.js';
-import { getSession } from './_auth.js';
-
-function setCors(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-}
-
 function sanitizeText(value) {
   if (value === undefined || value === null) return '';
   return String(value || '').trim();
@@ -61,9 +52,9 @@ function parseLocation(value) {
 function parseDateRange(value) {
   const text = sanitizeText(value);
   if (!text) return { start: '', end: '' };
-  const parts = text.split(/\\s*[-–—]\\s*/).filter(Boolean);
+  const parts = text.split(/\s*[-–—]\s*/).filter(Boolean);
   if (parts.length >= 2) return { start: parts[0], end: parts[1] };
-  const toParts = text.split(/\\s+to\\s+/i).filter(Boolean);
+  const toParts = text.split(/\s+to\s+/i).filter(Boolean);
   if (toParts.length >= 2) return { start: toParts[0], end: toParts[1] };
   return { start: text, end: '' };
 }
@@ -310,99 +301,67 @@ function buildMemberUpdates(payload, normalizedUrl) {
   return updates;
 }
 
-export default async function handler(req, res) {
-  setCors(res);
-  if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+export async function syncAboutMeForMember({ supabase, member_id, aboutme_url, targetMember }) {
+  if (!aboutme_url) throw new Error('aboutme.json URL is required');
 
+  let fetchResponse;
   try {
-    const session = await getSession(supabase, req);
-    if (!session) return res.status(401).json({ error: 'Unauthorized' });
-
-    const { member_id, aboutme_url } = req.body || {};
-    const normalizedUrl = normalizeExternalUrl(aboutme_url);
-    if (!normalizedUrl) return res.status(400).json({ error: 'aboutme.json URL is required' });
-
-    const { data: requester } = await supabase
-      .from('team_members')
-      .select('id, user_id, role')
-      .eq('user_id', session.user_id)
-      .single();
-    if (!requester) return res.status(403).json({ error: 'Profile not found for authenticated user' });
-
-    const targetId = Number(member_id) || requester.id;
-    const { data: targetMember } = await supabase.from('team_members').select('*').eq('id', targetId).single();
-    if (!targetMember) return res.status(404).json({ error: 'Member not found' });
-
-    const isAdmin = requester.role === 'admin';
-    const isOwner = requester.user_id === targetMember.user_id;
-    if (!isAdmin && !isOwner) {
-      return res.status(403).json({ error: 'You can only sync your own profile' });
-    }
-
-    let fetchResponse;
-    try {
-      fetchResponse = await fetch(normalizedUrl, {
-        headers: { 'User-Agent': 'paradox-aboutme-sync' },
-      });
-    } catch (error) {
-      return res.status(400).json({ error: 'Failed to reach aboutme.json URL' });
-    }
-
-    if (!fetchResponse.ok) {
-      return res.status(400).json({ error: `Unable to fetch aboutme.json (status ${fetchResponse.status})` });
-    }
-
-    let payload;
-    try {
-      payload = await fetchResponse.json();
-    } catch (error) {
-      return res.status(400).json({ error: 'aboutme.json did not return valid JSON' });
-    }
-
-    if (!payload || typeof payload !== 'object') {
-      return res.status(400).json({ error: 'Invalid aboutme.json payload' });
-    }
-
-    const base = normalizePayload(payload);
-    const memberUpdates = buildMemberUpdates(base, normalizedUrl);
-    const { data: updatedMember, error: updateError } = await supabase
-      .from('team_members')
-      .update(memberUpdates)
-      .eq('id', targetId)
-      .select()
-      .single();
-    if (updateError) throw updateError;
-
-    await supabase.from('experience').delete().eq('member_id', targetId);
-    await supabase.from('education').delete().eq('member_id', targetId);
-    await supabase.from('projects').delete().eq('member_id', targetId);
-    await supabase.from('certificates').delete().eq('member_id', targetId);
-
-    const experienceRows = buildExperienceRows(base.work || base.experience || base.jobs, targetId);
-    if (experienceRows.length) {
-      await supabase.from('experience').insert(experienceRows);
-    }
-
-    const educationRows = buildEducationRows(base.education || base.schools, targetId);
-    if (educationRows.length) {
-      await supabase.from('education').insert(educationRows);
-    }
-
-    const projectRows = buildProjectRows(base.projects || base.portfolio, targetId);
-    if (projectRows.length) {
-      await supabase.from('projects').insert(projectRows);
-    }
-
-    const certificateRows = buildCertificateRows(base.certifications || base.certificates || base.awards, targetId);
-    if (certificateRows.length) {
-      await supabase.from('certificates').insert(certificateRows);
-    }
-
-    return res.status(200).json({ member: updatedMember });
-  } catch (err) {
-    console.error('AboutMe sync error:', err);
-    const message = err instanceof Error ? err.message : String(err || 'Unable to sync profile');
-    return res.status(500).json({ error: message });
+    fetchResponse = await fetch(aboutme_url, {
+      headers: { 'User-Agent': 'paradox-aboutme-sync' },
+    });
+  } catch (error) {
+    throw new Error('Failed to reach aboutme.json URL');
   }
+
+  if (!fetchResponse.ok) {
+    throw new Error(`Unable to fetch aboutme.json (status ${fetchResponse.status})`);
+  }
+
+  let payload;
+  try {
+    payload = await fetchResponse.json();
+  } catch (error) {
+    throw new Error('aboutme.json did not return valid JSON');
+  }
+
+  if (!payload || typeof payload !== 'object') {
+    throw new Error('Invalid aboutme.json payload');
+  }
+
+  const memberUpdates = buildMemberUpdates(payload, aboutme_url);
+  const { data: updatedMember, error: updateError } = await supabase
+    .from('team_members')
+    .update(memberUpdates)
+    .eq('id', member_id)
+    .select()
+    .single();
+  if (updateError) throw updateError;
+
+  await supabase.from('experience').delete().eq('member_id', member_id);
+  await supabase.from('education').delete().eq('member_id', member_id);
+  await supabase.from('projects').delete().eq('member_id', member_id);
+  await supabase.from('certificates').delete().eq('member_id', member_id);
+
+  const base = normalizePayload(payload);
+  const experienceRows = buildExperienceRows(base.work || base.experience || base.jobs, member_id);
+  if (experienceRows.length) {
+    await supabase.from('experience').insert(experienceRows);
+  }
+
+  const educationRows = buildEducationRows(base.education || base.schools, member_id);
+  if (educationRows.length) {
+    await supabase.from('education').insert(educationRows);
+  }
+
+  const projectRows = buildProjectRows(base.projects || base.portfolio, member_id);
+  if (projectRows.length) {
+    await supabase.from('projects').insert(projectRows);
+  }
+
+  const certificateRows = buildCertificateRows(base.certifications || base.certificates || base.awards, member_id);
+  if (certificateRows.length) {
+    await supabase.from('certificates').insert(certificateRows);
+  }
+
+  return { member: updatedMember };
 }

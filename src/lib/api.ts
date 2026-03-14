@@ -110,18 +110,18 @@ export async function deleteCertificate(id: number) {
 }
 
 export async function syncGitHub(memberId: number, username: string) {
-  return requestJson('/api/github-sync', {
+  return requestJson('/api/members', {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify({ member_id: memberId, github_username: username }),
+    body: JSON.stringify({ member_id: memberId, github_username: username, sync_type: 'github' }),
   });
 }
 
 export async function syncAboutMe(memberId: number, url: string) {
-  return requestJson('/api/aboutme-sync', {
+  return requestJson('/api/members', {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify({ member_id: memberId, aboutme_url: url }),
+    body: JSON.stringify({ member_id: memberId, aboutme_url: url, sync_type: 'aboutme' }),
   });
 }
 
