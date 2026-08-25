@@ -7,8 +7,7 @@
   "outputDirectory": ".next",
   "cleanUrls": true,
   "trailingSlash": false,
-  "regions": ["bom1", "sin1"],
-  "github": {
+  "regions": ["bom1"],
     "silent": false,
     "autoAlias": true
   },
