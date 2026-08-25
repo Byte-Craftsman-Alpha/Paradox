@@ -1,0 +1,153 @@
+{
+  "team": [
+    {
+      "id": "anshika",
+      "name": "Anshika Singh",
+      "role": "Founder / Team Leader",
+      "discipline": "Product & Experience · Security Product",
+      "github": "https://github.com/Anshika9838",
+      "linkedin": "https://www.linkedin.com/in/anshika-singh-aa6a7a330/",
+      "responsibility": "Owns product direction, interaction quality and the security surface. Leads Theft Alert and holds the bar for accessible, editorial interfaces.",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Next.js",
+        "Vite",
+        "Framer Motion",
+        "Supabase",
+        "Python",
+        "FastAPI",
+        "Flask",
+        "Flutter",
+        "Browser Extensions",
+        "Prisma / SQLite"
+      ],
+      "evidence": [
+        "Theft Alert — MV3 + Flutter + FastAPI, heuristic + Gemini-assisted phishing detection",
+        "Leads design reviews and extension architecture decisions",
+        "Paradox design system steward"
+      ],
+      "capabilities": ["product-ux", "frontend-motion", "security", "mobile"],
+      "initials": "AS"
+    },
+    {
+      "id": "aditya",
+      "name": "Aditya Chaudhari",
+      "role": "Co-Leader",
+      "discipline": "Platform / Backend / Mobile",
+      "github": "https://github.com/Byte-Craftsman-Alpha",
+      "linkedin": "https://www.linkedin.com/in/byte-craftsman-alpha/",
+      "responsibility": "Owns EduPortal platform: roles, scheduling, real-time comms and companion mobile. Backend reliability and PWA/TWA packaging.",
+      "stack": [
+        "Python",
+        "Flask / FastAPI",
+        "SQLite",
+        "WebSockets / Socket.IO",
+        "Flutter",
+        "Supabase / Firebase",
+        "Selenium",
+        "OCR / OpenCV",
+        "PWA / TWA",
+        "Shell / C / ESP32",
+        "APK CI"
+      ],
+      "evidence": [
+        "EduPortal — student/faculty/admin, chat/polls/pins, push & TWA",
+        "Flutter companion + real-time infra",
+        "Device & automation bridging (ESP32, OCR)"
+      ],
+      "capabilities": ["backend-platform", "mobile", "automation-systems"],
+      "initials": "AC"
+    },
+    {
+      "id": "om",
+      "name": "Om Abhishek Tripathi",
+      "role": "AI / RAG Engineer",
+      "discipline": "Retrieval · Embeddings · Applied AI",
+      "github": "https://github.com/tripcoded",
+      "linkedin": "https://www.linkedin.com/in/om-abhishek-tripathi-57a261329/",
+      "responsibility": "Owns ARIA — ingestion (PDF/YouTube/GitHub), embeddings, Chroma retrieval, memory and Groq/LangChain orchestration. Labels AI honestly.",
+      "stack": [
+        "Next.js",
+        "React",
+        "TypeScript",
+        "FastAPI",
+        "LangChain",
+        "Groq",
+        "HuggingFace Embeddings",
+        "Chroma",
+        "Prisma / Postgres",
+        "Clerk / Inngest",
+        "Scraping / Image Similarity"
+      ],
+      "evidence": [
+        "ARIA — semantic RAG with deterministic fallback",
+        "PDF / YT / GitHub ingest pipelines",
+        "Evaluation harness for retrieval quality"
+      ],
+      "capabilities": ["ai-rag", "backend-platform", "automation-systems"],
+      "initials": "OT"
+    },
+    {
+      "id": "abhiuday",
+      "name": "Abhiuday Pratap Singh",
+      "role": "Frontend Interaction Engineer",
+      "discipline": "Motion · 3D UI · Frontend Systems",
+      "github": "https://github.com/Abhiuday02",
+      "linkedin": "https://www.linkedin.com/in/abhiuday-pratap-singh-3745232b9/",
+      "responsibility": "Owns Perkify interaction layer and motion systems — routes, JWT/auth, Prisma flows, plus FastAPI assistant. Carries the Framer/detail polish.",
+      "stack": [
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Framer Motion",
+        "3D UI",
+        "Express / JWT / Prisma / Postgres",
+        "FastAPI",
+        "Supabase",
+        "MongoDB",
+        "QR / SMTP / Event flows"
+      ],
+      "evidence": [
+        "Perkify — Next + Express + FastAPI assistant/recommendations",
+        "3D interaction studies and micro-motion tokens",
+        "Auth & event orchestration"
+      ],
+      "capabilities": ["frontend-motion", "product-ux", "backend-platform", "ai-rag"],
+      "initials": "AP"
+    },
+    {
+      "id": "ananya",
+      "name": "Ananya Singh",
+      "role": "Product Frontend Engineer",
+      "discipline": "Discovery · Document Systems · Marketplace",
+      "github": "https://github.com/annie067",
+      "linkedin": "https://www.linkedin.com/in/ananya-singh-b53602326/",
+      "responsibility": "Owns Career Boost and The Local Way — document parsing, deterministic matching/roadmaps, and village discovery/marketplace flows. Spelled Ananya.",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Vite",
+        "Framer Motion",
+        "Supabase",
+        "Serverless APIs",
+        "PDF / DOCX Extraction",
+        "Email Verify / Reset",
+        "Deterministic Analysis"
+      ],
+      "evidence": [
+        "Career Boost — deterministic skill/match/interview/roadmap logic",
+        "The Local Way — villages, stays, experiences, artisans, bookings",
+        "Discovery & marketplace flows"
+      ],
+      "capabilities": ["product-ux", "frontend-motion", "ai-rag", "automation-systems"],
+      "initials": "AS"
+    }
+  ],
+  "meta": {
+    "foundingCity": "Gorakhpur",
+    "foundingCountry": "India",
+    "contactEmail": "hello@teamparadox.in",
+    "publicDisclosure": "Profiles summarize public project evidence; LinkedIn details remain member-controlled."
+  }
+}

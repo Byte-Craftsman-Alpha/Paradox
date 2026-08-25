@@ -1,0 +1,68 @@
+{
+  "capabilities": [
+    {
+      "key": "product-ux",
+      "label": "Product & UX",
+      "note": "Editorial clarity, accessible defaults, calm complexity.",
+      "members": ["anshika", "abhiuday", "ananya"],
+      "projects": ["theft-alert", "eduportal", "perkify", "career-boost", "local-way"]
+    },
+    {
+      "key": "frontend-motion",
+      "label": "Frontend & Motion",
+      "note": "Precision motion, restraint, layout morphing.",
+      "members": ["anshika", "abhiuday", "ananya"],
+      "projects": ["theft-alert", "perkify", "local-way", "career-boost"]
+    },
+    {
+      "key": "backend-platform",
+      "label": "Backend & Platform",
+      "note": "Roles, real-time, auth and data boundaries.",
+      "members": ["aditya", "om", "abhiuday"],
+      "projects": ["eduportal", "aria", "perkify", "local-way"]
+    },
+    {
+      "key": "mobile",
+      "label": "Mobile",
+      "note": "Flutter, PWA/TWA, release CI and WebSockets.",
+      "members": ["anshika", "aditya"],
+      "projects": ["theft-alert", "eduportal"]
+    },
+    {
+      "key": "ai-rag",
+      "label": "AI / RAG & Applied Data",
+      "note": "Honest AI: RAG, embeddings, Groq, deterministic fallbacks.",
+      "members": ["om", "abhiuday", "ananya"],
+      "projects": ["theft-alert", "aria", "perkify", "career-boost"]
+    },
+    {
+      "key": "automation-systems",
+      "label": "Automation / Systems",
+      "note": "OCR, scraping, shell, ESP32 and glue systems.",
+      "members": ["aditya", "om", "ananya"],
+      "projects": ["eduportal", "aria", "career-boost"]
+    },
+    {
+      "key": "security",
+      "label": "Security Engineering",
+      "note": "Heuristics, WHOIS/SSL, MV3 and boundary thinking.",
+      "members": ["anshika"],
+      "projects": ["theft-alert"]
+    }
+  ],
+  "principles": [
+    { "n": "01", "title": "Evidence over adjectives", "text": "We show architecture, trade-offs and limitations. No invented metrics, testimonials or client logos. What you read is what we can point to." },
+    { "n": "02", "title": "Accessible by default", "text": "Semantic HTML, 44px targets, keyboard paths that work, focus that you can see. We test at 200% zoom, not just on our MacBooks." },
+    { "n": "03", "title": "Secure boundaries", "text": "Data is partitioned by role, tokens stay short-lived, and we keep secrets out of the client. Security is a constraint, not a badge." },
+    { "n": "04", "title": "Tests for critical paths", "text": "Auth, payments (when real), ingestion and scoring have tests. We don't chase coverage theatre; we protect the paths that hurt if broken." },
+    { "n": "05", "title": "Honest AI labels", "text": "Rules are called rules. RAG is RAG. We never label a heuristic a 'trained model' and we cite sources or say we couldn't find one." },
+    { "n": "06", "title": "Clear ownership", "text": "Every project has a named lead. Questions have somewhere to go, decisions have an owner, and blame has no home." }
+  ],
+  "operatingSystem": [
+    { "k": "01", "t": "Frame", "d": "Define the real problem and its non-goals." },
+    { "k": "02", "t": "Prototype", "d": "Make the smallest thing that can fail usefully." },
+    { "k": "03", "t": "Challenge", "d": "Break it, measure it, bring dissent." },
+    { "k": "04", "t": "Refine", "d": "Edit until only the essential remains." },
+    { "k": "05", "t": "Ship", "d": "Release, observe, own the consequences." }
+  ]
+}

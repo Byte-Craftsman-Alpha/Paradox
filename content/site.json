@@ -1,0 +1,33 @@
+{
+  "site": {
+    "name": "Team Paradox",
+    "url": "https://teamparadox.in",
+    "tagline": "Contradiction, engineered.",
+    "subcopy": "We design and build thoughtful digital systems across product, web, mobile, AI and security. Five students, one quiet operating system.",
+    "foundingCity": "Gorakhpur",
+    "foundingCountry": "India",
+    "contactEmail": "hello@teamparadox.in",
+    "manifesto": [
+      "We question the obvious.",
+      "Prototype the difficult.",
+      "Refine what deserves to last."
+    ],
+    "heroCta": {
+      "primary": "Explore selected work",
+      "secondary": "Meet the team"
+    },
+    "footer": {
+      "credit": "Five builders. One quiet operating system. The contradiction, engineered.",
+      "version": "v0.1.0"
+    }
+  },
+  "social": {
+    "team": [
+      { "id": "anshika", "github": "https://github.com/Anshika9838", "linkedin": "https://www.linkedin.com/in/anshika-singh-aa6a7a330/" },
+      { "id": "aditya", "github": "https://github.com/Byte-Craftsman-Alpha", "linkedin": "https://www.linkedin.com/in/byte-craftsman-alpha/" },
+      { "id": "om", "github": "https://github.com/tripcoded", "linkedin": "https://www.linkedin.com/in/om-abhishek-tripathi-57a261329/" },
+      { "id": "abhiuday", "github": "https://github.com/Abhiuday02", "linkedin": "https://www.linkedin.com/in/abhiuday-pratap-singh-3745232b9/" },
+      { "id": "ananya", "github": "https://github.com/annie067", "linkedin": "https://www.linkedin.com/in/ananya-singh-b53602326/" }
+    ]
+  }
+}

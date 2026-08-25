@@ -1,0 +1,19 @@
+# Vercel ignore — files not needed for production build/deploy
+node_modules
+.git
+.gitignore
+.eslintcache
+.vite
+.cache
+dist
+coverage
+playwright-report
+test-results
+*.log
+.DS_Store
+.env.local
+.env.*.local
+src/test/
+e2e/
+vitest.config.ts
+playwright.config.ts

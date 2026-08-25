@@ -1,0 +1,196 @@
+{
+  "projects": [
+    {
+      "id": "theft-alert",
+      "title": "Theft Alert",
+      "summary": "Chromium MV3 extension + Flutter companion that detects phishing in real time. Reputation, WHOIS, SSL and heuristics with Gemini assistance and deterministic guardrails.",
+      "problem": "Phishing pages mimic trusted brands faster than blocklists update. Users need instant, explainable risk assessment in the browser and on mobile.",
+      "owner": "anshika",
+      "ownerRole": "Lead — Product & Security",
+      "status": "Prototype",
+      "year": "2024 — Present",
+      "stack": ["Chromium MV3", "Flutter", "FastAPI", "WebSockets", "Supabase", "Gemini"],
+      "architecture": [
+        "MV3 service worker intercepts navigations",
+        "FastAPI scores URL via heuristics + reputation feeds",
+        "WHOIS / SSL / DOM signals normalized to 0–100",
+        "Flutter companion mirrors alerts via WebSockets"
+      ],
+      "decisions": [
+        "Gemini used as assist, never oracle — deterministic fallback always returns",
+        "Score normalization explained in UI, no black-box verdict",
+        "No persistent browsing history stored"
+      ],
+      "limitations": [
+        "Reputation feeds rate-limited; offline mode heuristic-only",
+        "Zero-day domains still rely on heuristics",
+        "Store review pending — labelled Prototype unless confirmed"
+      ],
+      "links": [
+        { "label": "Evidence", "href": "https://github.com/Anshika9838" }
+      ],
+      "capabilities": ["security", "frontend-motion", "mobile", "ai-rag"],
+      "index": "01"
+    },
+    {
+      "id": "eduportal",
+      "title": "EduPortal",
+      "summary": "Campus OS: student, faculty and admin roles covering schedules, exams, news, library vault, chat/polls/pins, push, PWA/TWA and Flutter companion.",
+      "problem": "Academic operations were split across sheets, WhatsApp and notice boards. Needed one trusted surface with offline-capable access.",
+      "owner": "aditya",
+      "ownerRole": "Lead — Platform & Mobile",
+      "status": "Active",
+      "year": "2023 — Present",
+      "stack": ["React", "Flutter", "Flask / FastAPI", "Socket.IO", "Supabase", "PWA / TWA"],
+      "architecture": [
+        "Role-based access + class-scoped data",
+        "Socket.IO for chat/polls/pins, optimistic UI",
+        "PWA with background sync, TWA wrapper",
+        "APK release CI for companion"
+      ],
+      "decisions": [
+        "SQLite → Supabase migration path preserved",
+        "TWA for Play Store without rewriting",
+        "Pinned notices treated as first-class objects"
+      ],
+      "limitations": [
+        "Push relies on FCM / Web Push availability",
+        "Offline writes queue, conflict resolution manual",
+        "Scale tested to cohort size, not institution cluster yet"
+      ],
+      "links": [
+        { "label": "Evidence", "href": "https://github.com/Byte-Craftsman-Alpha" }
+      ],
+      "capabilities": ["backend-platform", "mobile", "product-ux", "automation-systems"],
+      "index": "02"
+    },
+    {
+      "id": "aria",
+      "title": "ARIA",
+      "summary": "RAG assistant for PDF, YouTube and GitHub ingestion — embeddings, Chroma, semantic retrieval, memory and Groq/LangChain orchestration.",
+      "problem": "Teams learn from scattered PDFs, videos and repos. Needed one memory-aware assistant grounded in their own sources.",
+      "owner": "om",
+      "ownerRole": "Lead — AI / RAG",
+      "status": "Active",
+      "year": "2024",
+      "stack": ["Next.js", "FastAPI", "LangChain", "Groq", "Chroma", "HuggingFace"],
+      "architecture": [
+        "Ingest pipeline: chunk → embed (HF) → Chroma",
+        "Query: embed → retrieval → Groq synthesis with citations",
+        "Memory store for follow-ups",
+        "Source-grounded answers, no invented URLs"
+      ],
+      "decisions": [
+        "Chroma for local-first vector store",
+        "Groq for low-latency synthesis",
+        "Strict citation framing; fallback to 'not found in sources'"
+      ],
+      "limitations": [
+        "Chunking heuristic for scanned PDFs is lossy",
+        "No fine-tuning — retrieval quality bounds answers",
+        "YouTube transcript dependent on captions"
+      ],
+      "links": [
+        { "label": "Evidence", "href": "https://github.com/tripcoded" }
+      ],
+      "capabilities": ["ai-rag", "backend-platform", "automation-systems"],
+      "index": "03"
+    },
+    {
+      "id": "perkify",
+      "title": "Perkify",
+      "summary": "Perks & recommendations platform — Next.js + Express/JWT/Prisma/Postgres and a FastAPI assistant that assists without impersonating intelligence.",
+      "problem": "Benefits and perks discovery was generic and inauthentic. Needed contextual recommendations with honest labeling.",
+      "owner": "abhiuday",
+      "ownerRole": "Lead — Frontend Interaction",
+      "status": "Active",
+      "year": "2024",
+      "stack": ["Next.js", "Express", "Prisma", "PostgreSQL", "FastAPI", "JWT"],
+      "architecture": [
+        "Next.js app, Express API with JWT/Prisma",
+        "FastAPI microservice for assistant + recs",
+        "Supabase for media + auth supplement",
+        "QR / SMTP / event flows"
+      ],
+      "decisions": [
+        "Recommendations labelled 'heuristic' unless evaluated",
+        "Assistant isolated as microservice for independent scaling",
+        "Prisma as single schema source"
+      ],
+      "limitations": [
+        "Recommendation quality bounded by perk catalogue size",
+        "No trained ranking model — rules + embeddings only",
+        "Email deliverability via SMTP limits bursts"
+      ],
+      "links": [
+        { "label": "Evidence", "href": "https://github.com/Abhiuday02" }
+      ],
+      "capabilities": ["frontend-motion", "backend-platform", "ai-rag", "product-ux"],
+      "index": "04"
+    },
+    {
+      "id": "career-boost",
+      "title": "Career Boost",
+      "summary": "Ananya's focused career companion: Supabase + document parsing, deterministic skill/match/interview/roadmap/portfolio logic. No trained ML claims.",
+      "problem": "Students paste résumés and get vague advice. Needed deterministic, auditable analysis from actual document content.",
+      "owner": "ananya",
+      "ownerRole": "Lead — Product Frontend",
+      "status": "Prototype",
+      "year": "2024 — Emerging",
+      "stack": ["React / Vite", "Supabase", "Serverless APIs", "PDF/DOCX Extraction"],
+      "architecture": [
+        "Client PDF/DOCX extraction to text",
+        "Deterministic scoring: skills, gap analysis, role match",
+        "Interview & roadmap generators from templates",
+        "Portfolio scaffolder from parsed evidence"
+      ],
+      "decisions": [
+        "No 'ML model' language — rules + heuristics only",
+        "All scores explain their factors",
+        "Email verify/reset flows included"
+      ],
+      "limitations": [
+        "Extraction fails on scanned images (OCR not yet in path)",
+        "Roadmap templates limited to tracked roles",
+        "Needs human review before real hiring signal"
+      ],
+      "links": [
+        { "label": "Evidence", "href": "https://github.com/annie067" }
+      ],
+      "capabilities": ["product-ux", "automation-systems", "ai-rag"],
+      "index": "05"
+    },
+    {
+      "id": "local-way",
+      "title": "The Local Way",
+      "summary": "Village discovery platform — stays, experiences, artisans and bookings. Editorial discovery, marketplace pragmatics.",
+      "problem": "Rural tourism and craft need a calm, trustworthy surface that respects hosts and doesn't overwhelm with neon travel patterns.",
+      "owner": "ananya",
+      "ownerRole": "Lead — Discovery & Marketplace",
+      "status": "Prototype",
+      "year": "2024 — Emerging",
+      "stack": ["React", "Supabase", "Framer Motion", "Serverless APIs"],
+      "architecture": [
+        "Village → Stay → Experience hierarchy",
+        "Artisan profiles linked to inventory",
+        "Booking hold + confirm flow (no payment in prototype)",
+        "Editorial cards with warm monochrome imagery"
+      ],
+      "decisions": [
+        "Booking is hold-based, not real payment in prototype",
+        "Map vs list toggle respects reduced motion",
+        "Content hierarchy driven by editorial, not algorithmic feed"
+      ],
+      "limitations": [
+        "No real payment/fulfilment integration",
+        "Availability is mock-synced",
+        "Search is keyword, not semantic yet"
+      ],
+      "links": [
+        { "label": "Evidence", "href": "https://github.com/annie067" }
+      ],
+      "capabilities": ["product-ux", "frontend-motion", "backend-platform"],
+      "index": "06"
+    }
+  ]
+}
