@@ -8,9 +8,6 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "regions": ["bom1"],
-    "silent": false,
-    "autoAlias": true
-  },
   "headers": [
     {
       "source": "/(.*)",
