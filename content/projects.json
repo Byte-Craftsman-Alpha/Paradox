@@ -27,6 +27,7 @@
         "Store review pending — labelled Prototype unless confirmed"
       ],
       "links": [
+        { "label": "Repository", "href": "https://github.com/Anshika9838/Phishing-and-Fraud-Detection-Extension" },
         { "label": "Evidence", "href": "https://github.com/Anshika9838" }
       ],
       "capabilities": ["security", "frontend-motion", "mobile", "ai-rag"],
@@ -59,6 +60,7 @@
         "Scale tested to cohort size, not institution cluster yet"
       ],
       "links": [
+        { "label": "Repository", "href": "https://github.com/Byte-Craftsman-Alpha/Edu-Portal" },
         { "label": "Evidence", "href": "https://github.com/Byte-Craftsman-Alpha" }
       ],
       "capabilities": ["backend-platform", "mobile", "product-ux", "automation-systems"],
@@ -72,7 +74,7 @@
       "owner": "om",
       "ownerRole": "Lead — AI / RAG",
       "status": "Active",
-      "year": "2024",
+      "year": "2024 — Present",
       "stack": ["Next.js", "FastAPI", "LangChain", "Groq", "Chroma", "HuggingFace"],
       "architecture": [
         "Ingest pipeline: chunk → embed (HF) → Chroma",
@@ -91,6 +93,7 @@
         "YouTube transcript dependent on captions"
       ],
       "links": [
+        { "label": "Repository", "href": "https://github.com/tripcoded/ARIA-mypersonalAI" },
         { "label": "Evidence", "href": "https://github.com/tripcoded" }
       ],
       "capabilities": ["ai-rag", "backend-platform", "automation-systems"],
@@ -104,7 +107,7 @@
       "owner": "abhiuday",
       "ownerRole": "Lead — Frontend Interaction",
       "status": "Active",
-      "year": "2024",
+      "year": "2024 — Present",
       "stack": ["Next.js", "Express", "Prisma", "PostgreSQL", "FastAPI", "JWT"],
       "architecture": [
         "Next.js app, Express API with JWT/Prisma",
@@ -123,6 +126,7 @@
         "Email deliverability via SMTP limits bursts"
       ],
       "links": [
+        { "label": "Repository", "href": "https://github.com/Abhiuday02/perkify" },
         { "label": "Evidence", "href": "https://github.com/Abhiuday02" }
       ],
       "capabilities": ["frontend-motion", "backend-platform", "ai-rag", "product-ux"],
@@ -136,7 +140,7 @@
       "owner": "ananya",
       "ownerRole": "Lead — Product Frontend",
       "status": "Prototype",
-      "year": "2024 — Emerging",
+      "year": "2024 — Present",
       "stack": ["React / Vite", "Supabase", "Serverless APIs", "PDF/DOCX Extraction"],
       "architecture": [
         "Client PDF/DOCX extraction to text",
@@ -155,7 +159,8 @@
         "Needs human review before real hiring signal"
       ],
       "links": [
-        { "label": "Evidence", "href": "https://github.com/annie067" }
+        { "label": "Repository", "href": "https://github.com/ananya658/Career-boost-AI" },
+        { "label": "Evidence", "href": "https://github.com/ananya658" }
       ],
       "capabilities": ["product-ux", "automation-systems", "ai-rag"],
       "index": "05"
@@ -168,7 +173,7 @@
       "owner": "ananya",
       "ownerRole": "Lead — Discovery & Marketplace",
       "status": "Prototype",
-      "year": "2024 — Emerging",
+      "year": "2024 — Present",
       "stack": ["React", "Supabase", "Framer Motion", "Serverless APIs"],
       "architecture": [
         "Village → Stay → Experience hierarchy",
@@ -187,7 +192,8 @@
         "Search is keyword, not semantic yet"
       ],
       "links": [
-        { "label": "Evidence", "href": "https://github.com/annie067" }
+        { "label": "Repository", "href": "https://github.com/ananya658/The-Local-Way" },
+        { "label": "Evidence", "href": "https://github.com/ananya658" }
       ],
       "capabilities": ["product-ux", "frontend-motion", "backend-platform"],
       "index": "06"

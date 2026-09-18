@@ -1,0 +1,33 @@
+# Team Paradox
+> Five-person student tech studio in Gorakhpur, Uttar Pradesh, India.
+> We design and build digital systems across product, web, mobile, AI and security. Evidence over adjectives.
+
+## Hub (Studio Organization)
+- https://www.teamparadox.in/
+- https://www.teamparadox.in/network
+- https://www.teamparadox.in/work
+- https://www.teamparadox.in/team/anshika
+- https://www.teamparadox.in/team/aditya
+- https://www.teamparadox.in/team/om
+- https://www.teamparadox.in/team/abhiuday
+- https://www.teamparadox.in/team/ananya
+
+## Member Sites (Federated Independent Websites)
+- https://anshika.teamparadox.in/ — Anshika Singh (Product & Security Engineer)
+- https://aditya.teamparadox.in/ — Aditya Chaudhari (Python Full-Stack Engineer)
+- https://om.teamparadox.in/ — Om Abhishek Tripathi (RAG / Applied AI Engineer)
+- https://ananya.teamparadox.in/ — Ananya Singh (Product Frontend Engineer)
+- https://abhiuday.teamparadox.in/ — Abhiuday Pratap Singh (Frontend Interaction & Motion Engineer)
+
+## Selected Systems & Case Studies
+- Theft Alert (Anshika Singh) — Real-time phishing detection via Chromium MV3 extension + Flutter companion + FastAPI heuristics + Gemini assist: https://www.teamparadox.in/work/theft-alert
+- EduPortal (Aditya Chaudhari) — Academic campus OS with student/faculty/admin roles, real-time Socket.IO chat/polls/pins, offline PWA/TWA, and Flutter companion: https://www.teamparadox.in/work/eduportal
+- ARIA (Om Abhishek Tripathi) — Source-grounded RAG assistant with ingestion for PDF, YouTube and GitHub, embeddings, Chroma vector store, and Groq/LangChain orchestration: https://www.teamparadox.in/work/aria
+- Perkify (Abhiuday Pratap Singh) — Perks and recommendations platform with Next.js frontend, Express/JWT/Prisma backend, and isolated FastAPI assistant: https://www.teamparadox.in/work/perkify
+- Career Boost (Ananya Singh) — Deterministic career companion with client-side document parsing, skill gap analysis, and auditable roadmap generators: https://www.teamparadox.in/work/career-boost
+- The Local Way (Ananya Singh) — Editorial village discovery platform with stays, experiences, artisan profiles, and calm monochrome aesthetics: https://www.teamparadox.in/work/local-way
+
+## Studio Location & Contact
+- Founding Location: Gorakhpur, Uttar Pradesh, India
+- General Inquiries: hello@teamparadox.in
+

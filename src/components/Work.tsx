@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
-import { ArrowUpRight, ChevronDown } from "lucide-react";
+import { ArrowUpRight, ChevronDown, FileText } from "lucide-react";
+import Link from "next/link";
 import { projects, type CapabilityKey } from "@/lib/content";
 import { useFilter } from "./FilterProvider";
 import { EASE, SPRING } from "@/lib/motion";
@@ -43,9 +44,17 @@ export function Work() {
             <span>03</span>
             <span className="ml-2">Selected Work</span>
           </div>
-          <h2 className="col-span-12 md:col-span-9 text-[clamp(1.8rem,3vw,2.6rem)] leading-[1.1] tracking-[-0.015em] max-w-[34ch]">
-            Six projects in flight. Each a real system with a real lead, a real stack and a real list of limitations.
-          </h2>
+          <div className="col-span-12 md:col-span-9 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <h2 className="text-[clamp(1.8rem,3vw,2.6rem)] leading-[1.1] tracking-[-0.015em] max-w-[34ch]">
+              Six projects in flight. Each a real system with a real lead, a real stack and a real list of limitations.
+            </h2>
+            <Link
+              href="/work"
+              className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.14em] text-[var(--meta)] hover:text-[var(--fg)] underline underline-offset-4 shrink-0"
+            >
+              View all case studies →
+            </Link>
+          </div>
         </div>
 
         {filtered.length === 0 ? (
@@ -146,6 +155,12 @@ export function Work() {
                               <div className="col-span-12 flex items-center justify-between pt-4 border-t" style={{ borderColor: "var(--hairline)" }}>
                                 <span className="text-[12px] uppercase tracking-[0.18em] text-[var(--meta)]">Index · {p.index}</span>
                                 <div className="flex items-center gap-3">
+                                  <Link
+                                    href={`/work/${p.id}`}
+                                    className="inline-flex items-center gap-2 h-11 px-4 text-[13px] uppercase tracking-[0.14em] bg-[var(--fg)] text-[var(--bg)] hover:opacity-90"
+                                  >
+                                    <FileText size={14} /> Full Case Study <ArrowUpRight size={14} strokeWidth={1.5} />
+                                  </Link>
                                   {p.links.map((l) => (
                                     <a
                                       key={l.label}
@@ -234,6 +249,12 @@ export function Work() {
                               </div>
                             </Block>
                             <div className="flex flex-wrap items-center gap-2 pt-2">
+                              <Link
+                                href={`/work/${p.id}`}
+                                className="inline-flex items-center gap-1.5 h-10 px-3 text-[12px] uppercase tracking-[0.14em] bg-[var(--fg)] text-[var(--bg)]"
+                              >
+                                Full Case Study <ArrowUpRight size={13} strokeWidth={1.5} />
+                              </Link>
                               {p.links.map((l) => (
                                 <a
                                   key={l.label}

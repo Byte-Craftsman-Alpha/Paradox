@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Public_Sans } from "next/font/google";
+import { HUB_HOST, buildHubGraphJsonLd } from "@/lib/seo";
 import "../src/index.css";
 
 const publicSans = Public_Sans({
@@ -10,40 +11,71 @@ const publicSans = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://teamparadox.in"),
+  metadataBase: new URL(HUB_HOST),
   title: {
-    default: "Team Paradox — Contradiction, engineered.",
+    default: "Team Paradox — Student tech studio in Gorakhpur",
     template: "%s — Team Paradox",
   },
   description:
-    "Team Paradox is a five-member student tech team in Gorakhpur, India. We design and build thoughtful digital systems across product, web, mobile, AI and security.",
+    "Five students in Gorakhpur building real systems in product, web, mobile, AI and security. EduPortal, ARIA, Theft Alert — evidence over adjectives.",
   applicationName: "Team Paradox",
   authors: [{ name: "Team Paradox" }],
-  keywords: ["Team Paradox", "studio", "student tech team", "product", "AI", "RAG", "security", "Gorakhpur", "India"],
+  keywords: [
+    "Team Paradox",
+    "Team Paradox Gorakhpur",
+    "student tech studio",
+    "Gorakhpur tech studio",
+    "product engineering",
+    "AI",
+    "RAG",
+    "security",
+    "EduPortal",
+    "Theft Alert",
+    "ARIA",
+    "Uttar Pradesh",
+    "India",
+  ],
   creator: "Team Paradox",
   publisher: "Team Paradox",
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://teamparadox.in/",
     siteName: "Team Paradox",
-    title: "Team Paradox — Contradiction, engineered.",
+    title: "Team Paradox — Student tech studio in Gorakhpur",
     description:
-      "A five-member student tech team designing and building thoughtful digital systems. Evidence over adjectives.",
+      "Five students in Gorakhpur building real systems in product, web, mobile, AI and security. EduPortal, ARIA, Theft Alert — evidence over adjectives.",
+    url: HUB_HOST,
+    images: [
+      {
+        url: "/og/default.png",
+        width: 1200,
+        height: 630,
+        alt: "Team Paradox — Student Tech Studio in Gorakhpur",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Team Paradox — Contradiction, engineered.",
+    title: "Team Paradox — Student tech studio in Gorakhpur",
     description:
-      "A five-member student tech team. Evidence over adjectives.",
+      "Five students in Gorakhpur building real systems in product, web, mobile, AI and security. Evidence over adjectives.",
+    images: ["/og/default.png"],
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
-  icons: { icon: "/favicon.svg" },
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {
@@ -58,39 +90,15 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const jsonLdGraph = buildHubGraphJsonLd();
+
   return (
-    <html lang="en" className={publicSans.variable} suppressHydrationWarning>
+    <html lang="en-IN" className={publicSans.variable} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "Team Paradox",
-              url: "https://teamparadox.in/",
-              description:
-                "Five-member student tech team building digital systems across product, web, mobile, AI and security.",
-              address: {
-                "@type": "PostalAddress",
-                addressLocality: "Gorakhpur",
-                addressCountry: "IN",
-              },
-              sameAs: [
-                "https://github.com/Anshika9838",
-                "https://github.com/Byte-Craftsman-Alpha",
-                "https://github.com/tripcoded",
-                "https://github.com/Abhiuday02",
-                "https://github.com/annie067",
-              ],
-              member: [
-                { "@type": "Person", name: "Anshika Singh", sameAs: "https://www.linkedin.com/in/anshika-singh-aa6a7a330/" },
-                { "@type": "Person", name: "Aditya Chaudhari", sameAs: "https://www.linkedin.com/in/byte-craftsman-alpha/" },
-                { "@type": "Person", name: "Om Abhishek Tripathi", sameAs: "https://www.linkedin.com/in/om-abhishek-tripathi-57a261329/" },
-                { "@type": "Person", name: "Abhiuday Pratap Singh", sameAs: "https://www.linkedin.com/in/abhiuday-pratap-singh-3745232b9/" },
-                { "@type": "Person", name: "Ananya Singh", sameAs: "https://www.linkedin.com/in/ananya-singh-b53602326/" },
-              ],
-            }),
+            __html: JSON.stringify(jsonLdGraph),
           }}
         />
       </head>

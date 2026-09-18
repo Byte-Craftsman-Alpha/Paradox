@@ -1,7 +1,7 @@
 {
   "site": {
     "name": "Team Paradox",
-    "url": "https://teamparadox.in",
+    "url": "https://www.teamparadox.in",
     "tagline": "Contradiction, engineered.",
     "subcopy": "We design and build thoughtful digital systems across product, web, mobile, AI and security. Five students, one quiet operating system.",
     "foundingCity": "Gorakhpur",
@@ -27,7 +27,7 @@
       { "id": "aditya", "github": "https://github.com/Byte-Craftsman-Alpha", "linkedin": "https://www.linkedin.com/in/byte-craftsman-alpha/" },
       { "id": "om", "github": "https://github.com/tripcoded", "linkedin": "https://www.linkedin.com/in/om-abhishek-tripathi-57a261329/" },
       { "id": "abhiuday", "github": "https://github.com/Abhiuday02", "linkedin": "https://www.linkedin.com/in/abhiuday-pratap-singh-3745232b9/" },
-      { "id": "ananya", "github": "https://github.com/annie067", "linkedin": "https://www.linkedin.com/in/ananya-singh-b53602326/" }
+      { "id": "ananya", "github": "https://github.com/ananya658", "linkedin": "https://www.linkedin.com/in/ananya-singh-b53602326/" }
     ]
   }
 }

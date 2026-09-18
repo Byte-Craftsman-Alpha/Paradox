@@ -1,13 +1,17 @@
 "use client";
 import Link from "next/link";
-import { Github, Linkedin, ArrowLeft } from "lucide-react";
+import { Github, Linkedin, ArrowLeft, ArrowUpRight, Globe } from "lucide-react";
 import { motion } from "framer-motion";
 import { projectsByOwner, projects, capabilities, type TeamMember } from "@/lib/content";
-const projectList = projects.projects;
+import { FEDERATED_MEMBERS } from "@/lib/seo";
 import { EASE } from "@/lib/motion";
+
+const projectList = projects.projects;
 
 export function TeamMemberView({ member }: { member: TeamMember }) {
   const owned = projectsByOwner(member.id);
+  const federatedSpoke = FEDERATED_MEMBERS.find((m) => m.slug === member.id);
+
   return (
     <article className="relative pt-28 sm:pt-32 pb-20">
       <div className="mx-auto max-w-[1440px] px-5 sm:px-7 grid grid-cols-12 gap-y-6">
@@ -19,7 +23,9 @@ export function TeamMemberView({ member }: { member: TeamMember }) {
         </Link>
 
         <div className="col-span-12 md:col-span-8">
-          <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--meta)]">{member.role}</div>
+          <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--meta)]">
+            {member.role} · Team Paradox (Gorakhpur, India)
+          </div>
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }}
@@ -30,7 +36,18 @@ export function TeamMemberView({ member }: { member: TeamMember }) {
           <div className="text-[15px] text-[var(--fg-soft)] mt-2 max-w-[42ch]">{member.discipline}</div>
         </div>
 
-        <div className="col-span-12 md:col-span-4 flex md:justify-end items-start gap-2">
+        <div className="col-span-12 md:col-span-4 flex flex-wrap md:justify-end items-start gap-2">
+          {federatedSpoke && (
+            <a
+              href={federatedSpoke.host}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-2 h-11 px-3 border text-[12px] uppercase tracking-[0.14em] bg-[var(--fg)] text-[var(--bg)] hover:opacity-90"
+              style={{ borderColor: "var(--hairline)" }}
+            >
+              <Globe size={14} strokeWidth={1.5} /> Personal Portfolio <ArrowUpRight size={13} strokeWidth={1.5} />
+            </a>
+          )}
           <a
             href={member.github}
             target="_blank"
@@ -52,7 +69,7 @@ export function TeamMemberView({ member }: { member: TeamMember }) {
         </div>
 
         <section className="col-span-12">
-          <SectionTitle n="01" title="Responsibility" />
+          <SectionTitle n="01" title="Studio Role & Responsibility" />
           <p className="text-[17px] leading-[1.6] max-w-[64ch]">{member.responsibility}</p>
         </section>
 
@@ -77,29 +94,35 @@ export function TeamMemberView({ member }: { member: TeamMember }) {
         </section>
 
         <section className="col-span-12 md:col-span-7">
-          <SectionTitle n="04" title="Projects Owned / Linked" />
+          <SectionTitle n="04" title="Systems Owned / Linked" />
           {owned.length > 0 ? (
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {owned.map((p) => (
                 <li key={p.id} className="text-[15px] tracking-[-0.01em]">
-                  <Link href={`/#work`} className="underline decoration-[var(--meta)] underline-offset-4 hover:decoration-[var(--fg)]">
+                  <Link
+                    href={`/work/${p.id}`}
+                    className="underline decoration-[var(--meta)] underline-offset-4 hover:decoration-[var(--fg)] font-medium"
+                  >
                     {p.title}
                   </Link>
-                  <span className="text-[var(--meta)] text-[12px] ml-2">— {p.status}</span>
+                  <span className="text-[var(--meta)] text-[12px] ml-2">— {p.status} ({p.year})</span>
                 </li>
               ))}
             </ul>
           ) : (
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {projectList
                 .filter((p) => member.capabilities.some((cap) => p.capabilities.includes(cap)))
                 .slice(0, 5)
                 .map((p) => (
                   <li key={p.id} className="text-[15px] tracking-[-0.01em]">
-                    <Link href={`/#work`} className="underline decoration-[var(--meta)] underline-offset-4 hover:decoration-[var(--fg)]">
+                    <Link
+                      href={`/work/${p.id}`}
+                      className="underline decoration-[var(--meta)] underline-offset-4 hover:decoration-[var(--fg)] font-medium"
+                    >
                       {p.title}
                     </Link>
-                    <span className="text-[var(--meta)] text-[12px] ml-2">— {p.status}</span>
+                    <span className="text-[var(--meta)] text-[12px] ml-2">— {p.status} ({p.year})</span>
                   </li>
                 ))}
             </ul>
@@ -120,10 +143,20 @@ export function TeamMemberView({ member }: { member: TeamMember }) {
           </ul>
         </section>
 
-        <footer className="col-span-12 pt-2 border-t mt-2" style={{ borderColor: "var(--hairline)" }}>
-          <p className="text-[12px] text-[var(--meta)] leading-[1.55] pt-4">
-            Public links only. LinkedIn details remain member-controlled. Anything that can&apos;t be evidenced is intentionally omitted.
+        <footer className="col-span-12 pt-4 border-t mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4" style={{ borderColor: "var(--hairline)" }}>
+          <p className="text-[12px] text-[var(--meta)] leading-[1.55]">
+            Public links only. LinkedIn details remain member-controlled. Team Paradox · Gorakhpur, UP, India.
           </p>
+          {federatedSpoke && (
+            <a
+              href={federatedSpoke.host}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.14em] text-[var(--fg)] hover:underline"
+            >
+              Independent Spoke Host: <span className="font-mono lowercase">{federatedSpoke.host}</span> <ArrowUpRight size={13} />
+            </a>
+          )}
         </footer>
       </div>
     </article>

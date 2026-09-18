@@ -1,7 +1,10 @@
 "use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { site, teamMembers } from "@/lib/content";
+import { FEDERATED_MEMBERS } from "@/lib/seo";
 
 type State = "idle" | "submitting" | "success" | "server-error" | "rate-limit" | "validation";
 
@@ -198,25 +201,65 @@ export function Contact() {
 
         <motion.footer
           id="site-footer"
-          className="mt-24 sm:mt-32 pt-10 border-t flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6"
+          className="mt-24 sm:mt-32 pt-12 border-t flex flex-col gap-10"
           style={{ borderColor: "var(--hairline)" }}
         >
-          <div>
-            <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--meta)] mb-3">↳ Team Paradox</div>
-            <div className="text-[clamp(1.6rem,3.4vw,2.4rem)] leading-[1.05] tracking-[-0.02em] max-w-[28ch]">
-              Five builders. One quiet operating system. The contradiction, engineered.
+          <div className="grid grid-cols-12 gap-6 items-start">
+            <div className="col-span-12 md:col-span-5">
+              <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--meta)] mb-2">↳ Team Paradox</div>
+              <div className="text-[clamp(1.5rem,3vw,2.2rem)] leading-[1.1] tracking-[-0.02em] max-w-[26ch]">
+                Five builders. One quiet operating system. The contradiction, engineered.
+              </div>
+              <p className="mt-3 text-[13px] text-[var(--fg-soft)] leading-[1.55] max-w-[38ch]">
+                A student technology studio in Gorakhpur, Uttar Pradesh, India. Real systems, named leads, and verified evidence.
+              </p>
+            </div>
+
+            <div className="col-span-6 sm:col-span-3 md:col-span-3">
+              <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--meta)] mb-3">Studio Index</div>
+              <ul className="space-y-2 text-[13px] text-[var(--fg-soft)]">
+                <li><Link href="/" className="hover:text-[var(--fg)]">Home</Link></li>
+                <li><Link href="/work" className="hover:text-[var(--fg)]">Work & Case Studies</Link></li>
+                <li><Link href="/#team" className="hover:text-[var(--fg)]">Studio Team</Link></li>
+                <li><Link href="/network" className="hover:text-[var(--fg)] font-medium text-[var(--fg)]">Federation Network →</Link></li>
+                <li><Link href="/#principles" className="hover:text-[var(--fg)]">Operating Principles</Link></li>
+              </ul>
+            </div>
+
+            <div className="col-span-6 sm:col-span-4 md:col-span-4">
+              <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--meta)] mb-3">Member Portfolios (Spokes)</div>
+              <ul className="space-y-2 text-[13px] text-[var(--fg-soft)]">
+                {FEDERATED_MEMBERS.map((m) => (
+                  <li key={m.slug} className="flex items-center justify-between gap-2">
+                    <a
+                      href={m.host}
+                      target="_blank"
+                      rel="noopener"
+                      className="hover:text-[var(--fg)] inline-flex items-center gap-1.5"
+                    >
+                      {m.name} <ArrowUpRight size={12} className="text-[var(--meta)]" />
+                    </a>
+                    <Link
+                      href={`/team/${m.slug}`}
+                      className="text-[11px] uppercase tracking-wider text-[var(--meta)] hover:text-[var(--fg)]"
+                    >
+                      Role
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-          <ul className="text-[13px] text-[var(--fg-soft)] grid grid-cols-2 gap-x-8 gap-y-2 sm:max-w-[420px]">
-            {teamMembers.map((m) => (
-              <li key={m.id}>
-                <a href={m.github} target="_blank" rel="noreferrer" className="hover:text-[var(--fg)]">{m.name.split(" ")[0]} · GitHub</a>
-              </li>
-            ))}
-            <li className="col-span-2 mt-2"><a href={`mailto:${site.contactEmail}`} className="hover:text-[var(--fg)]">{site.contactEmail}</a></li>
-          </ul>
-          <div className="text-[11px] uppercase tracking-[0.18em] text-[var(--meta)]">
-            © {new Date().getFullYear()} · Gorakhpur, India · v0.1.0
+
+          <div className="pt-6 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-[12px] text-[var(--meta)]" style={{ borderColor: "var(--hairline)" }}>
+            <div>
+              © {new Date().getFullYear()} Team Paradox · Gorakhpur, Uttar Pradesh, India · <a href={`mailto:${site.contactEmail}`} className="hover:text-[var(--fg)]">{site.contactEmail}</a>
+            </div>
+            <div className="flex items-center gap-4">
+              <Link href="/network" className="hover:text-[var(--fg)]">Network</Link>
+              <Link href="/work" className="hover:text-[var(--fg)]">Case Studies</Link>
+              <a href="/llms.txt" target="_blank" className="hover:text-[var(--fg)] font-mono">llms.txt</a>
+            </div>
           </div>
         </motion.footer>
       </div>

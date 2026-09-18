@@ -1,6 +1,8 @@
 dist
 node_modules
 .vite
+.next
+*.tsbuildinfo
 playwright-report
 test-results
 src/test-setup
