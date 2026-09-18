@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { site, teamMembers } from "@/lib/content";
+import { site } from "@/lib/content";
 import { FEDERATED_MEMBERS } from "@/lib/seo";
 
 type State = "idle" | "submitting" | "success" | "server-error" | "rate-limit" | "validation";

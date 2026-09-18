@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, Github, CheckCircle2, AlertTriangle, ShieldCheck, Cpu } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Github, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Contact } from "@/components/Contact";
-import { projects, memberById, type Project } from "@/lib/content";
+import { projects, memberById } from "@/lib/content";
 import { HUB_HOST, buildProjectSoftwareJsonLd, FEDERATED_MEMBERS } from "@/lib/seo";
 
 export function generateStaticParams() {
@@ -18,7 +18,6 @@ export async function generateMetadata(
   const project = projects.projects.find((p) => p.id === id);
   if (!project) return { title: "Case Study Not Found" };
 
-  const owner = memberById(project.owner);
   const title = `${project.title} — ${project.summary.split(".")[0]}`;
 
   return {
