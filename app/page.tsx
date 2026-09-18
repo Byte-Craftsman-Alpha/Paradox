@@ -10,14 +10,36 @@ import { Principles } from "@/components/Principles";
 import { Contact } from "@/components/Contact";
 import { FilterProvider } from "@/components/FilterProvider";
 import { SectionIndicatorMount } from "@/components/SectionIndicatorMount";
+import { HUB_HOST } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Team Paradox — Student tech studio in Gorakhpur",
+  description:
+    "Five students in Gorakhpur building real systems in product, web, mobile, AI and security. EduPortal, ARIA, Theft Alert — evidence over adjectives.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    url: "https://www.teamparadox.in/",
+    title: "Team Paradox — Student tech studio in Gorakhpur",
+    description:
+      "Five students in Gorakhpur building real systems in product, web, mobile, AI and security. Evidence over adjectives.",
+    url: HUB_HOST,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Team Paradox Studio Hub",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Team Paradox — Student tech studio in Gorakhpur",
+    description:
+      "Five students in Gorakhpur building real systems in product, web, mobile, AI and security. Evidence over adjectives.",
+    images: ["/opengraph-image"],
   },
 };
 

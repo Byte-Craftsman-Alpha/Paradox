@@ -89,9 +89,9 @@ export function buildHubGraphJsonLd() {
         url: `${HUB_HOST}/`,
         logo: {
           "@type": "ImageObject",
-          url: `${HUB_HOST}/logo.png`,
-          width: 512,
-          height: 512,
+          url: `${HUB_HOST}/opengraph-image`,
+          width: 1200,
+          height: 630,
         },
         email: "hello@teamparadox.in",
         address: {

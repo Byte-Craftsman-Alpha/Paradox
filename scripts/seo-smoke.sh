@@ -24,7 +24,9 @@ check_endpoint() {
   tmp_file=$(mktemp)
 
   local http_code
-  http_code=$(curl -sL --max-time 15 -w "%{http_code}" -o "$tmp_file" "$url" || echo "000")
+  http_code=$(curl -sL --max-time 20 -w "%{http_code}" -o "$tmp_file" "$url" 2>/dev/null || true)
+  http_code="${http_code: -3}"
+  if [[ -z "$http_code" ]]; then http_code="000"; fi
 
   if [[ "$http_code" != "200" && "$http_code" != "308" ]]; then
     echo "❌ FAILED (HTTP Status $http_code)"

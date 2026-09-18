@@ -13,10 +13,27 @@ export const metadata: Metadata = {
     canonical: "/network",
   },
   openGraph: {
+    type: "website",
     title: "The Team Paradox Network — Studio Hub & Member Sites",
     description:
       "Directory of independent websites in the Team Paradox federation. Gorakhpur, India.",
     url: `${HUB_HOST}/network`,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "The Team Paradox Network",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Team Paradox Network — Studio Hub & Member Sites",
+    description:
+      "Directory of independent websites in the Team Paradox federation. Gorakhpur, India.",
+    images: ["/opengraph-image"],
   },
 };
 

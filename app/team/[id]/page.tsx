@@ -15,34 +15,37 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { id } = await params;
   const m = memberById(id);
-  if (!m) return { title: "Member not found" };
+  if (!m) return { title: "Member Not Found" };
 
   const pageTitle = `${m.name} — ${m.role}`;
+  const description = `${m.name} (${m.role}) at Team Paradox (Gorakhpur, India). Discipline: ${m.discipline}. ${m.responsibility}`;
 
   return {
     title: pageTitle,
-    description: `${m.name} (${m.role}) is a member of Team Paradox, a student tech studio in Gorakhpur, India. ${m.responsibility}`,
+    description,
     alternates: {
       canonical: `/team/${id}`,
     },
     openGraph: {
       type: "profile",
       title: `${pageTitle} · Team Paradox`,
-      description: m.responsibility,
+      description,
       url: `${HUB_HOST}/team/${id}`,
       images: [
         {
-          url: `/og/team-${id}.png`,
+          url: "/opengraph-image",
           width: 1200,
           height: 630,
           alt: `${m.name} — Team Paradox Profile`,
+          type: "image/png",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
       title: `${pageTitle} · Team Paradox`,
-      description: m.responsibility,
+      description,
+      images: ["/opengraph-image"],
     },
   };
 }

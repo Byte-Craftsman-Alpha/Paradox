@@ -33,6 +33,6 @@ export default function robots(): MetadataRoute.Robots {
       })),
     ],
     sitemap: `${HUB_HOST}/sitemap.xml`,
+    host: HUB_HOST,
   };
 }
-

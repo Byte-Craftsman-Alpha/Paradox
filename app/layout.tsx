@@ -19,7 +19,8 @@ export const metadata: Metadata = {
   description:
     "Five students in Gorakhpur building real systems in product, web, mobile, AI and security. EduPortal, ARIA, Theft Alert — evidence over adjectives.",
   applicationName: "Team Paradox",
-  authors: [{ name: "Team Paradox" }],
+  authors: [{ name: "Team Paradox", url: HUB_HOST }],
+  generator: "Next.js",
   keywords: [
     "Team Paradox",
     "Team Paradox Gorakhpur",
@@ -35,8 +36,23 @@ export const metadata: Metadata = {
     "Uttar Pradesh",
     "India",
   ],
+  referrer: "origin-when-cross-origin",
   creator: "Team Paradox",
   publisher: "Team Paradox",
+  category: "technology",
+  classification: "Technology & Software Engineering",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: "/",
+    languages: {
+      "en-IN": "/",
+      "x-default": "/",
+    },
+  },
   openGraph: {
     type: "website",
     locale: "en_IN",
@@ -47,10 +63,11 @@ export const metadata: Metadata = {
     url: HUB_HOST,
     images: [
       {
-        url: "/og/default.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
         alt: "Team Paradox — Student Tech Studio in Gorakhpur",
+        type: "image/png",
       },
     ],
   },
@@ -59,7 +76,7 @@ export const metadata: Metadata = {
     title: "Team Paradox — Student tech studio in Gorakhpur",
     description:
       "Five students in Gorakhpur building real systems in product, web, mobile, AI and security. Evidence over adjectives.",
-    images: ["/og/default.png"],
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
@@ -73,9 +90,14 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/favicon.svg",
-    apple: "/apple-touch-icon.png",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-icon", sizes: "180x180", type: "image/png" },
+    ],
   },
+  manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {

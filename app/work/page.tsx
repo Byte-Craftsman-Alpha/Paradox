@@ -14,10 +14,27 @@ export const metadata: Metadata = {
     canonical: "/work",
   },
   openGraph: {
+    type: "website",
     title: "Engineering Case Studies — Team Paradox",
     description:
       "Deep technical case studies for product, AI, mobile, and security systems built by Team Paradox in Gorakhpur, India.",
     url: `${HUB_HOST}/work`,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Engineering Case Studies — Team Paradox",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Engineering Case Studies — Team Paradox",
+    description:
+      "Deep technical case studies for product, AI, mobile, and security systems built by Team Paradox in Gorakhpur, India.",
+    images: ["/opengraph-image"],
   },
 };
 
