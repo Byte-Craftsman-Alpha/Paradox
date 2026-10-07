@@ -13,11 +13,32 @@ function shouldScrollEnable(): boolean {
   );
 }
 
+type ScrollCallback = (data: { scroll: number; velocity: number }) => void;
+const scrollCallbacks = new Set<ScrollCallback>();
+
+export function onScroll(callback: ScrollCallback): () => void {
+  scrollCallbacks.add(callback);
+  return () => {
+    scrollCallbacks.delete(callback);
+  };
+}
+
 export function setupScroll() {
   const forceDisable = !shouldScrollEnable();
+  
+  const onNativeScroll = () => {
+    scrollCallbacks.forEach((cb) => cb({ scroll: window.scrollY, velocity: 0 }));
+  };
+  window.addEventListener("scroll", onNativeScroll, { passive: true });
+
   if (forceDisable) {
     // Native scroll on touch, short viewports and reduced motion.
-    return { destroy: () => {}, forceDisable: true as const };
+    return {
+      destroy: () => {
+        window.removeEventListener("scroll", onNativeScroll);
+      },
+      forceDisable: true as const,
+    };
   }
 
   lenis = new Lenis({
@@ -29,6 +50,10 @@ export function setupScroll() {
     touchMultiplier: 1.2,
   });
 
+  lenis.on("scroll", (e: { scroll: number; velocity: number }) => {
+    scrollCallbacks.forEach((cb) => cb({ scroll: e.scroll, velocity: e.velocity }));
+  });
+
   function raf(time: number) {
     lenis?.raf(time);
     rafId = requestAnimationFrame(raf);
@@ -38,6 +63,7 @@ export function setupScroll() {
   return {
     destroy() {
       cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", onNativeScroll);
       lenis?.destroy();
       lenis = null;
     },
