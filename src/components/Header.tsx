@@ -10,7 +10,7 @@ import type { Theme } from "@/lib/content";
 import { EASE } from "@/lib/motion";
 
 const NAV = [
-  { id: "work", label: "Work", href: "/work" },
+  { id: "work", label: "Work", href: "/#work" },
   { id: "capabilities", label: "Capabilities", href: "/#capabilities" },
   { id: "team", label: "Team", href: "/#team" },
   { id: "achievements", label: "Timeline", href: "/#achievements" },
@@ -52,6 +52,9 @@ export function Header() {
     if (item.href.startsWith("/#")) {
       const sectionId = item.href.replace("/#", "");
       if (pathname === "/") {
+        if (typeof window !== "undefined" && window.history?.pushState) {
+          window.history.pushState(null, "", `#${sectionId}`);
+        }
         requestAnimationFrame(() => scrollToId(sectionId));
       } else {
         router.push(item.href);

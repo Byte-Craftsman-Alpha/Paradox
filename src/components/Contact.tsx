@@ -178,7 +178,7 @@ export function Contact() {
             </div>
           </div>
 
-          <div id="contact-status" role="status" aria-live="polite" className="col-span-12">
+          <div id="contact-status" role={state !== "idle" ? "status" : undefined} aria-live="polite" className="col-span-12">
             {state === "success" && (
               <Banner tone="success" title="Email draft opened." body={`If your mail client didn't open, mail ${site.contactEmail} directly.`} />
             )}

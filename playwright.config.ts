@@ -5,16 +5,16 @@ export default defineConfig({
   fullyParallel: true,
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:3000",
     headless: true,
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
   ],
   webServer: {
-    command: "npm run preview -- --host 127.0.0.1 --port 4173 --strictPort",
-    url: "http://127.0.0.1:4173",
-    reuseExistingServer: !process.env.CI,
+    command: "node node_modules/next/dist/bin/next start --port 3000",
+    url: "http://127.0.0.1:3000",
+    reuseExistingServer: true,
     timeout: 60_000,
   },
 });

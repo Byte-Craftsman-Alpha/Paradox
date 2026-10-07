@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, CheckCircle2, RotateCcw } from "lucide-react";
 import Link from "next/link";
-import { achievements, type Achievement } from "@/lib/content";
+import { achievements } from "@/lib/content";
 import { EASE } from "@/lib/motion";
 
 export function Achievements() {
@@ -86,7 +86,7 @@ export function Achievements() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span role="status" aria-live="polite" className="text-[11px] font-mono text-[var(--meta)] uppercase tracking-[0.14em]">
+            <span aria-live="polite" className="text-[11px] font-mono text-[var(--meta)] uppercase tracking-[0.14em]">
               Showing {filtered.length} of {achievements.length}
             </span>
             {selectedCategory !== "All" && (
