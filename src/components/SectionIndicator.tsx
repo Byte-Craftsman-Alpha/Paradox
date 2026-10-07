@@ -8,8 +8,9 @@ const labels: Record<string, string> = {
   work: "03 · Work",
   capabilities: "04 · Capabilities",
   team: "05 · Team",
-  principles: "06 · Principles",
-  contact: "07 · Contact",
+  achievements: "06 · Timeline",
+  principles: "08 · Principles",
+  contact: "09 · Contact",
 };
 
 const IDS = Object.keys(labels);

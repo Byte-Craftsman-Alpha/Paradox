@@ -14,7 +14,7 @@ export function OperatingSystem() {
       <div className="mx-auto max-w-[1440px] px-5 sm:px-7">
         <div className="grid grid-cols-12 gap-5 mb-10">
           <div className="col-span-12 md:col-span-3 text-[11px] uppercase tracking-[0.18em] text-[var(--meta)]">
-            <span>06</span>
+            <span>07</span>
             <span className="ml-2">Operating System</span>
           </div>
           <h2 className="col-span-12 md:col-span-9 text-[clamp(1.8rem,3vw,2.4rem)] leading-[1.1] tracking-[-0.015em] max-w-[40ch]">

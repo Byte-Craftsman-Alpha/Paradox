@@ -69,7 +69,7 @@ export function Contact() {
       <div className="mx-auto max-w-[1440px] px-5 sm:px-7">
         <div className="grid grid-cols-12 gap-5 mb-10 sm:mb-14">
           <div className="col-span-12 md:col-span-3 text-[11px] uppercase tracking-[0.18em] text-[var(--meta)]">
-            <span>08</span>
+            <span>09</span>
             <span className="ml-2">Contact</span>
           </div>
           <h2 className="col-span-12 md:col-span-9 text-[clamp(2rem,4.4vw,3.4rem)] leading-[1.05] tracking-[-0.02em] max-w-[20ch]">

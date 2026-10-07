@@ -62,6 +62,16 @@ const OSStepSchema = z.object({
   k: z.string().regex(/^\d{2}$/), t: z.string().min(2).max(40), d: z.string().min(10).max(200),
 });
 
+const AchievementSchema = z.object({
+  year: z.string().min(4).max(20),
+  quarter: z.string().min(2).max(10).optional(),
+  title: z.string().min(2).max(100),
+  category: z.string().min(2).max(50),
+  summary: z.string().min(10).max(350),
+  highlight: z.string().min(2).max(100),
+  project: z.string().optional(),
+});
+
 const SiteFileSchema = z.object({
   site: z.object({
     name: z.string(), url: z.string().url(), tagline: z.string(), subcopy: z.string(),
@@ -88,6 +98,7 @@ const CapabilitiesFileSchema = z.object({
   capabilities: z.array(CapabilitySchema).min(1),
   principles: z.array(PrincipleSchema).min(1),
   operatingSystem: z.array(OSStepSchema).min(1),
+  achievements: z.array(AchievementSchema).min(1),
 });
 
 async function load(name) {
@@ -132,6 +143,13 @@ if (ok) {
   for (const c of capabilities.capabilities) {
     for (const m of c.members) if (!memberIds.has(m)) errors.push(`capabilities/${c.key}.members includes unknown "${m}"`);
     for (const p of c.projects) if (!projectIds.has(p)) errors.push(`capabilities/${c.key}.projects includes unknown "${p}"`);
+  }
+  if (capabilities.achievements) {
+    for (const a of capabilities.achievements) {
+      if (a.project && !projectIds.has(a.project)) {
+        errors.push(`achievements/"${a.title}".project includes unknown "${a.project}"`);
+      }
+    }
   }
   if (errors.length) {
     ok = false;

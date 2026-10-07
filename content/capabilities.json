@@ -64,5 +64,77 @@
     { "k": "03", "t": "Challenge", "d": "Break it, measure it, bring dissent." },
     { "k": "04", "t": "Refine", "d": "Edit until only the essential remains." },
     { "k": "05", "t": "Ship", "d": "Release, observe, own the consequences." }
+  ],
+  "achievements": [
+    {
+      "year": "2023",
+      "quarter": "Q3",
+      "title": "Studio Charter Established",
+      "category": "Studio",
+      "summary": "Five engineering students in Gorakhpur founded Team Paradox to build real digital systems with production constraints, committing to evidence over adjectives.",
+      "highlight": "5 Builders in Gorakhpur · Foundational charter established"
+    },
+    {
+      "year": "2023",
+      "quarter": "Q4",
+      "title": "EduPortal Multi-Role Deployment",
+      "category": "Platform",
+      "summary": "Engineered and deployed EduPortal for collegiate communications, integrating Flask/FastAPI backend, real-time WebSocket messaging, SQLite persistence, and role-based access.",
+      "highlight": "Multi-role architecture · Real-time socket communication",
+      "project": "eduportal"
+    },
+    {
+      "year": "2024",
+      "quarter": "Q2",
+      "title": "Mobile Companion & PWA Architecture",
+      "category": "Mobile",
+      "summary": "Shipped cross-platform Flutter companion application with automated APK build pipelines, background push notification orchestration, and offline-capable Trusted Web Activity packaging.",
+      "highlight": "Flutter companion · TWA / PWA packaging",
+      "project": "eduportal"
+    },
+    {
+      "year": "2024",
+      "quarter": "Q3",
+      "title": "ARIA Deterministic RAG Pipeline",
+      "category": "Applied AI",
+      "summary": "Architected semantic document retrieval over technical PDFs, YouTube transcripts, and GitHub repositories using Chroma vector storage, HuggingFace embeddings, and LangChain with deterministic fallbacks.",
+      "highlight": "Semantic retrieval · Deterministic fallback scoring",
+      "project": "aria"
+    },
+    {
+      "year": "2024",
+      "quarter": "Q4",
+      "title": "Theft Alert MV3 Extension & Heuristics",
+      "category": "Security",
+      "summary": "Engineered dual-stage phishing and threat interception using Chromium Manifest V3 service workers, local heuristic domain analysis, and Gemini-assisted threat assessment.",
+      "highlight": "Chromium MV3 worker · Two-stage heuristic analysis",
+      "project": "theft-alert"
+    },
+    {
+      "year": "2025",
+      "quarter": "Q1",
+      "title": "Perkify Interactive Platform Architecture",
+      "category": "Frontend",
+      "summary": "Released Perkify student perk and event platform combining Express API with JWT authorization, dynamic QR validation, Prisma ORM, and a bespoke micro-motion interaction layer.",
+      "highlight": "Next.js + Express + Prisma · Dynamic QR ticketing",
+      "project": "perkify"
+    },
+    {
+      "year": "2025",
+      "quarter": "Q3",
+      "title": "Document Parsing & Village Discovery Prototype",
+      "category": "Product",
+      "summary": "Built client-side resume parser and deterministic roadmap generator (Career Boost) alongside village-first cultural stay and artisanal booking marketplace (The Local Way) on Supabase.",
+      "highlight": "Client-side PDF/DOCX parsing · Supabase relational model",
+      "project": "career-boost"
+    },
+    {
+      "year": "2026",
+      "quarter": "Q1",
+      "title": "Federated Studio Architecture & WCAG 2.1 AA Audit",
+      "category": "Engineering",
+      "summary": "Unified the studio web platform with static pre-rendering, federated member domain routing, complete keyboard focus traps, zero-runtime CSS transitions, and full WCAG 2.1 AA accessibility verification.",
+      "highlight": "Static federation · 100% keyboard navigation & WCAG 2.1 AA"
+    }
   ]
 }

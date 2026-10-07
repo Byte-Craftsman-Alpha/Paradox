@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { projects, teamMembers, capabilities, type CapabilityKey } from "../lib/content";
+import { projects, teamMembers, capabilities, achievements, type CapabilityKey } from "../lib/content";
 
 describe("filter logic", () => {
   it("filters projects by capability", () => {
@@ -50,5 +50,18 @@ describe("filter logic", () => {
   it("Ananya is spelled correctly", () => {
     const m = teamMembers.find((x) => x.id === "ananya");
     expect(m?.name).toBe("Ananya Singh");
+  });
+
+  it("achievements timeline records valid project milestones and non-empty evidence", () => {
+    const projectIds = new Set(projects.projects.map((p) => p.id));
+    expect(achievements.length).toBeGreaterThan(0);
+    for (const a of achievements) {
+      expect(a.title.length).toBeGreaterThan(0);
+      expect(a.highlight.length).toBeGreaterThan(0);
+      expect(a.summary.length).toBeGreaterThan(10);
+      if (a.project) {
+        expect(projectIds.has(a.project)).toBe(true);
+      }
+    }
   });
 });

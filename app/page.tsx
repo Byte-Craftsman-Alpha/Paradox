@@ -5,6 +5,7 @@ import { Manifesto } from "@/components/Manifesto";
 import { Work } from "@/components/Work";
 import { Capabilities } from "@/components/Capabilities";
 import { Team } from "@/components/Team";
+import { Achievements } from "@/components/Achievements";
 import { OperatingSystem } from "@/components/OperatingSystem";
 import { Principles } from "@/components/Principles";
 import { Contact } from "@/components/Contact";
@@ -54,6 +55,7 @@ export default function HomePage() {
           <Work />
           <Capabilities />
           <Team />
+          <Achievements />
           <OperatingSystem />
           <Principles />
           <Contact />

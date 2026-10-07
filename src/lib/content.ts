@@ -79,6 +79,17 @@ const OSStepSchema = z.object({
   d: z.string().min(10).max(200),
 });
 
+export const AchievementSchema = z.object({
+  year: z.string().min(4).max(20),
+  quarter: z.string().min(2).max(10).optional(),
+  title: z.string().min(2).max(100),
+  category: z.string().min(2).max(50),
+  summary: z.string().min(10).max(350),
+  highlight: z.string().min(2).max(100),
+  project: z.string().optional(),
+});
+export type Achievement = z.infer<typeof AchievementSchema>;
+
 const SocialEntry = z.object({
   id: z.string(),
   github: z.string().url(),
@@ -116,6 +127,7 @@ const CapabilitiesFileSchema = z.object({
   capabilities: z.array(CapabilitySchema).min(1),
   principles: z.array(PrincipleSchema).min(1),
   operatingSystem: z.array(OSStepSchema).min(1),
+  achievements: z.array(AchievementSchema).min(1).default([]),
 });
 
 const SiteFileSchema = z.object({
@@ -148,6 +160,7 @@ export const teamMembers: TeamMember[] = team.team;
 export const capabilities = capabilityFile.capabilities;
 export const principles = capabilityFile.principles;
 export const osSteps = capabilityFile.operatingSystem;
+export const achievements: Achievement[] = capabilityFile.achievements;
 export const site = siteFile.site;
 export const socialTeam = siteFile.social.team;
 
