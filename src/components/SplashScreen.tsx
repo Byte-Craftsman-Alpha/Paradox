@@ -1,34 +1,41 @@
 "use client";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { prefersReducedMotion, EASE } from "@/lib/motion";
+import { prefersReducedMotion } from "@/lib/motion";
 
 interface SplashScreenProps {
   onComplete?: () => void;
 }
 
+// Snappy physical shutter curve (realistic inertia)
+const SHUTTER_EASE = [0.76, 0, 0.24, 1] as const;
+
 export function SplashScreen({ onComplete }: SplashScreenProps) {
+  const [isVisible, setIsVisible] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [phase, setPhase] = useState<"loading" | "morphing" | "complete">("loading");
+  const [phase, setPhase] = useState<"loading" | "reveal" | "done">("loading");
 
   useEffect(() => {
+    // 1. Guard against mid-browsing re-triggers: run once per session only
+    const seen = sessionStorage.getItem("paradox_splash_seen");
     const isReduced = prefersReducedMotion();
     const isTest = typeof window !== "undefined" && (window.navigator.webdriver || window.location.search.includes("notimer"));
 
-    if (isReduced || isTest) {
-      const t = setTimeout(() => {
-        setPhase("complete");
-        onComplete?.();
-      }, 0);
-      return () => clearTimeout(t);
+    if (seen || isReduced || isTest) {
+      onComplete?.();
+      return;
     }
 
-    // Smooth counter tick up to 100% over 1050ms
-    const startTime = performance.now();
-    const duration = 1050;
+    // Mark as seen immediately so intra-route navigation never re-triggers it
+    sessionStorage.setItem("paradox_splash_seen", "true");
 
+    // 2. Snappy progress tick (380ms total)
+    const startTime = performance.now();
+    const duration = 380;
     let rafId = 0;
+
     const tick = (now: number) => {
+      setIsVisible(true);
       const elapsed = now - startTime;
       const pct = Math.min(100, Math.floor((elapsed / duration) * 100));
       setProgress(pct);
@@ -37,27 +44,29 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
         rafId = requestAnimationFrame(tick);
       } else {
         setProgress(100);
+        // Snappy transition into physical reveal after a brief 60ms pause
         setTimeout(() => {
-          setPhase("morphing");
+          setPhase("reveal");
           setTimeout(() => {
-            setPhase("complete");
+            setPhase("done");
+            setIsVisible(false);
             onComplete?.();
-          }, 850);
-        }, 150);
+          }, 520);
+        }, 60);
       }
     };
 
     rafId = requestAnimationFrame(tick);
 
-    // Allow user to click or press any key to instantly complete
+    // Instant bypass on user interaction (key or click)
     const handleSkip = () => {
       cancelAnimationFrame(rafId);
-      setProgress(100);
-      setPhase("morphing");
+      setPhase("reveal");
       setTimeout(() => {
-        setPhase("complete");
+        setPhase("done");
+        setIsVisible(false);
         onComplete?.();
-      }, 300);
+      }, 200);
     };
 
     window.addEventListener("keydown", handleSkip, { once: true });
@@ -70,89 +79,62 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
     };
   }, [onComplete]);
 
+  if (!isVisible && phase === "done") {
+    return null;
+  }
+
   return (
     <AnimatePresence>
-      {phase !== "complete" && (
-        <div
-          aria-label="Loading site contents"
-          className="fixed inset-0 z-[9999] pointer-events-auto select-none overflow-hidden"
+      {isVisible && phase !== "done" && (
+        <motion.div
+          initial={{ y: "0%" }}
+          animate={{ y: phase === "reveal" ? "-100%" : "0%" }}
+          transition={{ duration: 0.52, ease: SHUTTER_EASE }}
+          aria-hidden="true"
+          className="fixed inset-0 z-[9999] bg-[var(--bg)] border-b border-[var(--hairline)] flex flex-col justify-between p-6 sm:p-10 select-none shadow-2xl pointer-events-auto"
         >
-          {/* Top Curtain */}
-          <motion.div
-            initial={{ y: "0%" }}
-            animate={{ y: phase === "morphing" ? "-100%" : "0%" }}
-            transition={{ duration: 0.85, ease: EASE }}
-            className="absolute top-0 left-0 right-0 h-1/2 bg-[var(--bg)] border-b border-[var(--hairline)] flex flex-col justify-between p-6 sm:p-12 z-20"
-          >
-            <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-[var(--meta)] font-mono">
-              <span className="flex items-center gap-2">
-                <span className="inline-block h-2 w-2 rounded-full bg-[var(--fg)] animate-pulse" />
-                <span>Team Paradox · OS v0.1.0</span>
-              </span>
-              <span>Gorakhpur, India</span>
-            </div>
+          {/* Top minimal header */}
+          <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.2em] text-[var(--meta)] font-mono">
+            <span>Team Paradox</span>
+            <span>01 · 2026</span>
+          </div>
 
-            <div className="max-w-[1440px] mx-auto w-full flex flex-col items-center justify-end pb-4 text-center">
-              <span className="text-[12px] uppercase tracking-[0.24em] text-[var(--meta)] font-mono mb-2">
-                Initializing Digital Architecture
-              </span>
-              <h1 className="text-[clamp(2.2rem,6vw,5.5rem)] font-light leading-none tracking-[-0.03em] text-[var(--fg)]">
-                PARADOX
+          {/* Minimalist Centerpiece */}
+          <div className="flex flex-col items-center justify-center text-center max-w-[360px] mx-auto w-full">
+            <motion.div
+              animate={{ opacity: phase === "reveal" ? 0 : 1, y: phase === "reveal" ? -16 : 0 }}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+              className="w-full flex flex-col items-center"
+            >
+              <h1 className="text-[clamp(1.6rem,4vw,2.4rem)] font-light tracking-[0.22em] text-[var(--fg)] uppercase mb-6">
+                Paradox
               </h1>
-            </div>
-          </motion.div>
 
-          {/* Bottom Curtain */}
-          <motion.div
-            initial={{ y: "0%" }}
-            animate={{ y: phase === "morphing" ? "100%" : "0%" }}
-            transition={{ duration: 0.85, ease: EASE }}
-            className="absolute bottom-0 left-0 right-0 h-1/2 bg-[var(--bg)] border-t border-[var(--hairline)] flex flex-col justify-between p-6 sm:p-12 z-20"
-          >
-            <div className="max-w-[1440px] mx-auto w-full flex flex-col items-center justify-start pt-4 text-center">
-              <p className="text-[14px] sm:text-[16px] text-[var(--fg-soft)] tracking-[-0.01em] italic font-light max-w-[48ch]">
-                Contradiction, engineered. Five builders, one quiet operating system.
-              </p>
-
-              {/* Progress Bar & Counter */}
-              <div className="w-full max-w-[420px] mt-8">
-                <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-[var(--meta)] font-mono mb-2">
-                  <span>Mounting Specimen</span>
-                  <span className="tabular-nums font-semibold text-[var(--fg)]">{String(progress).padStart(3, "0")}%</span>
-                </div>
-                <div className="h-[2px] w-full bg-[var(--milk-3)] dark:bg-[var(--line-dark)] overflow-hidden">
-                  <motion.div
-                    className="h-full bg-[var(--fg)]"
-                    style={{ width: `${progress}%` }}
-                    transition={{ ease: "linear" }}
-                  />
-                </div>
+              {/* Minimal 1px hairline progress line */}
+              <div className="w-full h-px bg-[var(--hairline)] relative overflow-hidden mb-3">
+                <motion.div
+                  className="absolute left-0 top-0 bottom-0 bg-[var(--fg)]"
+                  style={{ width: `${progress}%` }}
+                  transition={{ ease: "linear" }}
+                />
               </div>
-            </div>
 
-            <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-[var(--meta)] font-mono">
-              <span className="hidden sm:inline">WebGL 3D Specimen // Three.js</span>
-              <span>Tap anywhere to enter</span>
-            </div>
-          </motion.div>
+              {/* Quiet tabular percentage */}
+              <div className="flex items-center justify-between w-full text-[10px] uppercase tracking-[0.2em] text-[var(--meta)] font-mono">
+                <span>Init</span>
+                <span className="tabular-nums font-semibold text-[var(--fg)]">
+                  {String(progress).padStart(3, "0")}%
+                </span>
+              </div>
+            </motion.div>
+          </div>
 
-          {/* Center Morphing Aperture / Emblem */}
-          <motion.div
-            initial={{ scale: 1, opacity: 1 }}
-            animate={{
-              scale: phase === "morphing" ? 1.8 : 1,
-              opacity: phase === "morphing" ? 0 : 1,
-            }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
-          >
-            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border border-[var(--fg)] flex items-center justify-center bg-[var(--bg)] shadow-lg">
-              <span className="text-[11px] font-mono tracking-widest uppercase text-[var(--fg)]">
-                0xPX
-              </span>
-            </div>
-          </motion.div>
-        </div>
+          {/* Bottom subtle metadata */}
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-[var(--meta)] font-mono">
+            <span>Gorakhpur, India</span>
+            <span>Contradiction, engineered</span>
+          </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );
