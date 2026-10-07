@@ -3,13 +3,17 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { onScroll } from "@/lib/scroll";
 import { prefersReducedMotion } from "@/lib/motion";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Activity } from "lucide-react";
 
 export function HeroSpline() {
   const containerRef = useRef<HTMLDivElement>(null);
   const resetRef = useRef<() => void>(() => {});
+  const toggleCoreRef = useRef<() => void>(() => {});
+
   const [rotationAngle, setRotationAngle] = useState(0);
+  const [pitchAngle, setPitchAngle] = useState(0);
   const [isInteracting, setIsInteracting] = useState(false);
+  const [coreActive, setCoreActive] = useState(true);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -20,12 +24,12 @@ export function HeroSpline() {
     // Scene & Camera
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-      45,
+      42,
       container.clientWidth / container.clientHeight,
       0.1,
       100
     );
-    camera.position.set(0, 0, 11);
+    camera.position.set(0, 0, 10.5);
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({
@@ -45,28 +49,29 @@ export function HeroSpline() {
         secondary: isDark ? 0xb8b4a8 : 0x68665f,
         hairline: isDark ? 0x3b3c38 : 0xd3cec4,
         node: isDark ? 0xffffff : 0x191a18,
+        core: isDark ? 0xe2ded4 : 0x292a27,
       };
     }
     let colors = getColors();
 
-    // 3D Spline Curve Generation (Parametric Trefoil / Paradox knot)
-    const pointsCount = 18;
+    // 1. 3D Spline Curve Generation (Parametric Trefoil / Paradox knot)
+    const pointsCount = 20;
     const curvePoints: THREE.Vector3[] = [];
     for (let i = 0; i < pointsCount; i++) {
       const u = (i / pointsCount) * Math.PI * 2;
       // Mathematical knot: continuous closed 3D spline
-      const x = Math.sin(u) * (2.4 + Math.cos(2 * u)) * 1.5;
+      const x = Math.sin(u) * (2.4 + Math.cos(2 * u)) * 1.55;
       const y = Math.cos(u) * (1.8 + Math.sin(3 * u) * 0.3) * 1.05;
       const z = Math.sin(2 * u) * 1.6;
       curvePoints.push(new THREE.Vector3(x, y, z));
     }
     const splineCurve = new THREE.CatmullRomCurve3(curvePoints, true, "centripetal", 0.5);
 
-    // Main 3D Spline Group
-    const splineGroup = new THREE.Group();
-    scene.add(splineGroup);
+    // Main 3D Spline Artifact Group
+    const artifactGroup = new THREE.Group();
+    scene.add(artifactGroup);
 
-    // 1. Core High-Res Spline Line
+    // Core Spline Line
     const splinePoints = splineCurve.getPoints(360);
     const lineGeo = new THREE.BufferGeometry().setFromPoints(splinePoints);
     const lineMat = new THREE.LineBasicMaterial({
@@ -75,10 +80,10 @@ export function HeroSpline() {
       opacity: 0.85,
     });
     const mainSplineLine = new THREE.Line(lineGeo, lineMat);
-    splineGroup.add(mainSplineLine);
+    artifactGroup.add(mainSplineLine);
 
-    // 2. 3D Architectural Wireframe Tube
-    const tubeGeo = new THREE.TubeGeometry(splineCurve, 200, 0.08, 8, true);
+    // 3D Architectural Wireframe Tube
+    const tubeGeo = new THREE.TubeGeometry(splineCurve, 220, 0.075, 8, true);
     const tubeMat = new THREE.MeshBasicMaterial({
       color: colors.secondary,
       wireframe: true,
@@ -86,13 +91,13 @@ export function HeroSpline() {
       opacity: 0.18,
     });
     const tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
-    splineGroup.add(tubeMesh);
+    artifactGroup.add(tubeMesh);
 
-    // 3. Orthogonal Structural Rib Rings along Spline Frames
+    // Orthogonal Structural Rib Rings along Spline Frames
     const ribGroup = new THREE.Group();
-    const ribCount = 48;
+    const ribCount = 52;
     const frames = splineCurve.computeFrenetFrames(ribCount, true);
-    const ringGeo = new THREE.RingGeometry(0.18, 0.22, 16);
+    const ringGeo = new THREE.RingGeometry(0.16, 0.2, 16);
     const ringMat = new THREE.MeshBasicMaterial({
       color: colors.hairline,
       side: THREE.DoubleSide,
@@ -115,11 +120,57 @@ export function HeroSpline() {
       ribMesh.rotation.setFromRotationMatrix(m);
       ribGroup.add(ribMesh);
     }
-    splineGroup.add(ribGroup);
+    artifactGroup.add(ribGroup);
 
-    // 4. Kinetic Pulses / Nodes Traveling Along the 3D Spline
-    const nodeCount = 10;
-    const nodeGeo = new THREE.OctahedronGeometry(0.09, 0);
+    // 2. Inner Floating Paradox Gyroscopic Core
+    const coreGroup = new THREE.Group();
+    artifactGroup.add(coreGroup);
+
+    // Outer Gimbal Ring
+    const gimbalGeo1 = new THREE.TorusGeometry(1.6, 0.015, 16, 72);
+    const gimbalMat1 = new THREE.MeshBasicMaterial({
+      color: colors.hairline,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.6,
+    });
+    const gimbal1 = new THREE.Mesh(gimbalGeo1, gimbalMat1);
+    coreGroup.add(gimbal1);
+
+    // Inner Gimbal Ring (perpendicular)
+    const gimbalGeo2 = new THREE.TorusGeometry(1.3, 0.015, 16, 72);
+    const gimbalMat2 = new THREE.MeshBasicMaterial({
+      color: colors.hairline,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.5,
+    });
+    const gimbal2 = new THREE.Mesh(gimbalGeo2, gimbalMat2);
+    gimbal2.rotation.x = Math.PI / 2;
+    coreGroup.add(gimbal2);
+
+    // Center Crystalline Icosahedron
+    const icoGeo = new THREE.IcosahedronGeometry(0.9, 0);
+    const icoMat = new THREE.MeshBasicMaterial({
+      color: colors.core,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.75,
+    });
+    const icoMesh = new THREE.Mesh(icoGeo, icoMat);
+    coreGroup.add(icoMesh);
+
+    // Center Quantum Point
+    const centerPointGeo = new THREE.OctahedronGeometry(0.18, 0);
+    const centerPointMat = new THREE.MeshBasicMaterial({
+      color: colors.primary,
+    });
+    const centerPoint = new THREE.Mesh(centerPointGeo, centerPointMat);
+    coreGroup.add(centerPoint);
+
+    // 3. Kinetic Pulses / Nodes Traveling Along the 3D Spline
+    const nodeCount = 12;
+    const nodeGeo = new THREE.OctahedronGeometry(0.08, 0);
     const nodeMat = new THREE.MeshBasicMaterial({
       color: colors.node,
       wireframe: true,
@@ -129,12 +180,12 @@ export function HeroSpline() {
     const nodeOffsets: number[] = [];
     for (let i = 0; i < nodeCount; i++) {
       const node = new THREE.Mesh(nodeGeo, nodeMat);
-      splineGroup.add(node);
+      artifactGroup.add(node);
       nodes.push(node);
       nodeOffsets.push(i / nodeCount);
     }
 
-    // 5. Subtle Swiss Hairline Coordinates Compass / Reference Plane
+    // 4. Subtle Blueprint Reference Plane / Coordinate Compass
     const compassGroup = new THREE.Group();
     const circleGeo = new THREE.BufferGeometry();
     const circlePts: THREE.Vector3[] = [];
@@ -157,6 +208,10 @@ export function HeroSpline() {
       lineMat.color.setHex(colors.primary);
       tubeMat.color.setHex(colors.secondary);
       ringMat.color.setHex(colors.hairline);
+      gimbalMat1.color.setHex(colors.hairline);
+      gimbalMat2.color.setHex(colors.hairline);
+      icoMat.color.setHex(colors.core);
+      centerPointMat.color.setHex(colors.primary);
       nodeMat.color.setHex(colors.node);
       compassMat.color.setHex(colors.hairline);
     });
@@ -175,6 +230,7 @@ export function HeroSpline() {
     let prevPointerX = 0;
     let prevPointerY = 0;
     let isVisible = true;
+    let runCoreSpin = true;
 
     // Viewport Intersection Observer
     const io = new IntersectionObserver(([entry]) => {
@@ -237,6 +293,22 @@ export function HeroSpline() {
     };
     window.addEventListener("resize", onResize);
 
+    // Controls refs
+    resetRef.current = () => {
+      targetRotX = 0.2;
+      targetRotY = 0;
+      dragVelocityX = 0;
+      dragVelocityY = 0;
+      artifactGroup.rotation.x = 0.2;
+      artifactGroup.rotation.y = 0;
+      artifactGroup.rotation.z = 0;
+    };
+
+    toggleCoreRef.current = () => {
+      runCoreSpin = !runCoreSpin;
+      setCoreActive(runCoreSpin);
+    };
+
     // Render loop
     let rafId = 0;
     let tClock = 0;
@@ -254,10 +326,10 @@ export function HeroSpline() {
 
       tClock += 0.006 + Math.min(Math.abs(scrollVelocity) * 0.0004, 0.04);
 
-      // Scroll-driven rotation & position
+      // Scroll-driven rotation & depth
       const scrollRotY = scrollY * 0.0018;
       const scrollRotX = scrollY * 0.001;
-      const scrollDollyZ = Math.min(scrollY * 0.002, 1.8);
+      const scrollDollyZ = Math.min(scrollY * 0.0018, 1.6);
 
       // Inertia drag decay
       dragVelocityX *= 0.92;
@@ -266,21 +338,28 @@ export function HeroSpline() {
       targetRotY += dragVelocityY;
 
       // Mouse parallax + base auto-spin
-      targetRotY += 0.002;
-      const hoverTiltX = mouseY * 0.25;
-      const hoverTiltY = mouseX * 0.35;
+      targetRotY += 0.0022;
+      const hoverTiltX = mouseY * 0.22;
+      const hoverTiltY = mouseX * 0.32;
 
       // Smooth lerp into actual rotation
-      splineGroup.rotation.x += (targetRotX + hoverTiltX + scrollRotX - splineGroup.rotation.x) * 0.06;
-      splineGroup.rotation.y += (targetRotY + hoverTiltY + scrollRotY - splineGroup.rotation.y) * 0.06;
-      splineGroup.rotation.z = Math.sin(tClock * 0.6) * 0.08;
+      artifactGroup.rotation.x += (targetRotX + hoverTiltX + scrollRotX - artifactGroup.rotation.x) * 0.06;
+      artifactGroup.rotation.y += (targetRotY + hoverTiltY + scrollRotY - artifactGroup.rotation.y) * 0.06;
+      artifactGroup.rotation.z = Math.sin(tClock * 0.6) * 0.06;
 
       // Camera depth response
-      camera.position.z = 11 + scrollDollyZ;
+      camera.position.z = 10.5 + scrollDollyZ;
+
+      // Gyroscopic Core Counter-Rotation
+      if (runCoreSpin) {
+        coreGroup.rotation.x -= 0.005 + Math.abs(scrollVelocity) * 0.0002;
+        coreGroup.rotation.y -= 0.007 + Math.abs(scrollVelocity) * 0.0003;
+        coreGroup.rotation.z += 0.004;
+      }
 
       // Update travelling kinetic nodes along 3D spline
       for (let i = 0; i < nodeCount; i++) {
-        const u = (nodeOffsets[i] + tClock * 0.25) % 1;
+        const u = (nodeOffsets[i] + tClock * 0.22) % 1;
         const pt = splineCurve.getPointAt(u);
         nodes[i].position.copy(pt);
         nodes[i].rotation.x += 0.03;
@@ -288,22 +367,15 @@ export function HeroSpline() {
       }
 
       // Compass counter-rotation
-      compassGroup.rotation.y = -splineGroup.rotation.y * 0.3;
+      compassGroup.rotation.y = -artifactGroup.rotation.y * 0.3;
 
       renderer.render(scene, camera);
 
-      // Update readout angle occasionally
-      const deg = Math.round(((splineGroup.rotation.y * 180) / Math.PI) % 360);
-      setRotationAngle(deg < 0 ? deg + 360 : deg);
-    };
-
-    resetRef.current = () => {
-      targetRotX = 0.2;
-      targetRotY = 0;
-      dragVelocityX = 0;
-      dragVelocityY = 0;
-      splineGroup.rotation.x = 0.2;
-      splineGroup.rotation.y = 0;
+      // Update readout angle telemetry
+      const degY = Math.round(((artifactGroup.rotation.y * 180) / Math.PI) % 360);
+      const degX = Math.round(((artifactGroup.rotation.x * 180) / Math.PI) % 360);
+      setRotationAngle(degY < 0 ? degY + 360 : degY);
+      setPitchAngle(degX < 0 ? degX + 360 : degX);
     };
 
     container.style.cursor = "grab";
@@ -324,8 +396,21 @@ export function HeroSpline() {
       lineMat.dispose();
       tubeGeo.dispose();
       tubeMat.dispose();
+      ribGroup.children.forEach((c) => {
+        if (c instanceof THREE.Mesh) {
+          c.geometry.dispose();
+        }
+      });
       ringGeo.dispose();
       ringMat.dispose();
+      gimbalGeo1.dispose();
+      gimbalMat1.dispose();
+      gimbalGeo2.dispose();
+      gimbalMat2.dispose();
+      icoGeo.dispose();
+      icoMat.dispose();
+      centerPointGeo.dispose();
+      centerPointMat.dispose();
       nodeGeo.dispose();
       nodeMat.dispose();
       circleGeo.dispose();
@@ -344,30 +429,46 @@ export function HeroSpline() {
       {/* Swiss Telemetry Overlay HUD */}
       <div className="absolute top-3 left-3 pointer-events-none flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[var(--meta)] font-mono">
         <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--fg)] animate-pulse" />
-        <span>3D Spline · Catmull-Rom</span>
+        <span>3D Specimen 01 · Catmull-Rom & Core</span>
+      </div>
+
+      <div className="absolute top-3 right-3 pointer-events-none hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-[var(--meta)] font-mono">
+        <span>WebGL · Three.js</span>
       </div>
 
       <div className="absolute bottom-3 left-3 text-[10px] uppercase tracking-[0.18em] text-[var(--meta)] font-mono hidden sm:flex items-center gap-3">
         <span>θ {String(rotationAngle).padStart(3, "0")}°</span>
         <span>/</span>
+        <span>φ {String(pitchAngle).padStart(3, "0")}°</span>
+        <span>/</span>
         <span>Drag to orbit</span>
+
         <button
           type="button"
           onClick={() => resetRef.current?.()}
-          aria-label="Reset spline orientation"
-          className="inline-flex items-center gap-1 text-[var(--meta)] hover:text-[var(--fg)] cursor-pointer ml-2 border px-1.5 py-0.5 border-[var(--hairline)]"
+          aria-label="Reset orientation"
+          className="inline-flex items-center gap-1 text-[var(--meta)] hover:text-[var(--fg)] cursor-pointer ml-1 border px-1.5 py-0.5 border-[var(--hairline)]"
         >
           <RotateCcw size={10} />
           <span>Reset</span>
         </button>
+
+        <button
+          type="button"
+          onClick={() => toggleCoreRef.current?.()}
+          aria-label="Toggle gyroscopic core"
+          className="inline-flex items-center gap-1 text-[var(--meta)] hover:text-[var(--fg)] cursor-pointer border px-1.5 py-0.5 border-[var(--hairline)]"
+        >
+          <Activity size={10} />
+          <span>{coreActive ? "Core: Active" : "Core: Paused"}</span>
+        </button>
       </div>
 
       {isInteracting && (
-        <div className="absolute top-3 right-3 pointer-events-none text-[10px] uppercase tracking-[0.16em] text-[var(--fg)] bg-[var(--bg)]/90 px-2 py-0.5 border border-[var(--hairline)]">
-          Orbiting
+        <div className="absolute top-8 right-3 pointer-events-none text-[10px] uppercase tracking-[0.16em] text-[var(--fg)] bg-[var(--bg)]/90 px-2 py-0.5 border border-[var(--hairline)]">
+          Orbiting Specimen
         </div>
       )}
     </div>
   );
 }
-

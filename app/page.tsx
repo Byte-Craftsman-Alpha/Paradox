@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/Header";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { SplashScreen } from "@/components/SplashScreen";
 import { Hero } from "@/components/Hero";
 import { Manifesto } from "@/components/Manifesto";
 import { Work } from "@/components/Work";
@@ -48,6 +49,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
+      <SplashScreen />
       <Header />
       <SmoothScroll />
       <main id="main" tabIndex={-1} className="focus:outline-none">
