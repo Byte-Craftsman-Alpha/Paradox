@@ -464,9 +464,13 @@ export function HeroSpline() {
         </button>
       </div>
 
-      {isInteracting && (
+      {isInteracting ? (
         <div className="absolute top-8 right-3 pointer-events-none text-[10px] uppercase tracking-[0.16em] text-[var(--fg)] bg-[var(--bg)]/90 px-2 py-0.5 border border-[var(--hairline)]">
           Orbiting Specimen
+        </div>
+      ) : (
+        <div className="absolute bottom-3 right-3 pointer-events-none hidden sm:flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-[var(--meta)] font-mono">
+          <span>alignment motif ⏤</span>
         </div>
       )}
     </div>

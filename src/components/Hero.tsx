@@ -67,13 +67,6 @@ export function Hero() {
               className="absolute top-0 bottom-0 left-1/2 w-px bg-[var(--hairline)] pointer-events-none z-10 opacity-70"
               aria-hidden
             />
-
-            <div className="absolute top-3 right-3 text-[10px] uppercase tracking-[0.22em] text-[var(--meta)] pointer-events-none z-10 font-mono hidden sm:block">
-              ⏤ Team Paradox
-            </div>
-            <div className="absolute bottom-3 right-3 text-[10px] uppercase tracking-[0.22em] text-[var(--meta)] pointer-events-none z-10 font-mono hidden sm:block">
-              alignment motif ⏤
-            </div>
           </div>
         </div>
 
