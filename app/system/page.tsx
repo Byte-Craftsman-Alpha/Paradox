@@ -8,7 +8,7 @@ export default function SystemPage() {
   return (
     <>
       <Header />
-      <main id="main">
+      <main id="main" tabIndex={-1} className="focus:outline-none">
         <SystemGallery />
       </main>
       <Contact />

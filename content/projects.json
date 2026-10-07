@@ -8,7 +8,7 @@
       "owner": "anshika",
       "ownerRole": "Lead — Product & Security",
       "status": "Prototype",
-      "year": "2024 — Present",
+      "year": "2026 — Present",
       "stack": ["Chromium MV3", "Flutter", "FastAPI", "WebSockets", "Supabase", "Gemini"],
       "architecture": [
         "MV3 service worker intercepts navigations",
@@ -41,7 +41,7 @@
       "owner": "aditya",
       "ownerRole": "Lead — Platform & Mobile",
       "status": "Active",
-      "year": "2023 — Present",
+      "year": "2025 — Present",
       "stack": ["React", "Flutter", "Flask / FastAPI", "Socket.IO", "Supabase", "PWA / TWA"],
       "architecture": [
         "Role-based access + class-scoped data",
@@ -74,7 +74,7 @@
       "owner": "om",
       "ownerRole": "Lead — AI / RAG",
       "status": "Active",
-      "year": "2024 — Present",
+      "year": "2026 — Present",
       "stack": ["Next.js", "FastAPI", "LangChain", "Groq", "Chroma", "HuggingFace"],
       "architecture": [
         "Ingest pipeline: chunk → embed (HF) → Chroma",
@@ -107,7 +107,7 @@
       "owner": "abhiuday",
       "ownerRole": "Lead — Frontend Interaction",
       "status": "Active",
-      "year": "2024 — Present",
+      "year": "2026 — Present",
       "stack": ["Next.js", "Express", "Prisma", "PostgreSQL", "FastAPI", "JWT"],
       "architecture": [
         "Next.js app, Express API with JWT/Prisma",
@@ -140,7 +140,7 @@
       "owner": "ananya",
       "ownerRole": "Lead — Product Frontend",
       "status": "Prototype",
-      "year": "2024 — Present",
+      "year": "2026 — Present",
       "stack": ["React / Vite", "Supabase", "Serverless APIs", "PDF/DOCX Extraction"],
       "architecture": [
         "Client PDF/DOCX extraction to text",
@@ -173,7 +173,7 @@
       "owner": "ananya",
       "ownerRole": "Lead — Discovery & Marketplace",
       "status": "Prototype",
-      "year": "2024 — Present",
+      "year": "2025 — Present",
       "stack": ["React", "Supabase", "Framer Motion", "Serverless APIs"],
       "architecture": [
         "Village → Stay → Experience hierarchy",

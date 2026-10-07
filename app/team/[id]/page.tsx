@@ -68,7 +68,7 @@ export default async function MemberPage({ params }: { params: Promise<{ id: str
         />
       )}
       <Header />
-      <main id="main">
+      <main id="main" tabIndex={-1} className="focus:outline-none">
         <TeamMemberView member={member} />
       </main>
       <Contact />

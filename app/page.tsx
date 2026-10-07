@@ -46,9 +46,8 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <a className="sr-only" href="#main">Skip to content</a>
       <Header />
-      <main id="main">
+      <main id="main" tabIndex={-1} className="focus:outline-none">
         <FilterProvider>
           <Hero />
           <Manifesto />

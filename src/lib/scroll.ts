@@ -52,7 +52,7 @@ export function getLenis() {
 export function scrollToId(id: string) {
   const target = document.getElementById(id);
   if (!target) return;
-  const y = target.getBoundingClientRect().top + window.scrollY - 80;
+  const y = Math.max(0, target.getBoundingClientRect().top + window.scrollY - 80);
   if (lenis) lenis.scrollTo(y, { duration: 0.7 });
   else window.scrollTo({ top: y, behavior: "auto" });
 }

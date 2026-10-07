@@ -18,7 +18,7 @@ export default function NotFound() {
   return (
     <>
       <Header />
-      <main id="main" className="relative pt-28 sm:pt-36 pb-20">
+      <main id="main" tabIndex={-1} className="relative pt-28 sm:pt-36 pb-20 focus:outline-none">
         <article className="mx-auto max-w-[1440px] px-5 sm:px-7">
           <div className="max-w-[720px]">
             <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-[var(--meta)] mb-4">

@@ -68,7 +68,7 @@ export default async function WorkCaseStudyPage({ params }: { params: Promise<{ 
         }}
       />
       <Header />
-      <main id="main" className="relative pt-28 sm:pt-36 pb-20">
+      <main id="main" tabIndex={-1} className="relative pt-28 sm:pt-36 pb-20 focus:outline-none">
         <article className="mx-auto max-w-[1440px] px-5 sm:px-7">
           <Link
             href="/work"

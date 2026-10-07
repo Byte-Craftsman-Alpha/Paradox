@@ -66,9 +66,23 @@ export function Header() {
     setTheme(next);
   };
 
+  const handleSkipToContent = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const main = document.getElementById("main");
+    if (main) {
+      e.preventDefault();
+      main.focus();
+      scrollToId("main");
+      if (typeof window !== "undefined" && window.history?.pushState) {
+        window.history.pushState(null, "", "#main");
+      }
+    }
+  };
+
   return (
     <>
-      <a href="#main" className="skip-link">Skip to content</a>
+      <a href="#main" className="skip-link" onClick={handleSkipToContent}>
+        Skip to content
+      </a>
       <motion.header
         initial={false}
         animate={{}}
